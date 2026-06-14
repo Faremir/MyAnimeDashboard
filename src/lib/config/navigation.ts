@@ -56,6 +56,21 @@ export const navigationItems: NavigationItem[] = [
                 label: 'Completed',
                 href: '/library/completed',
             },
+            {
+                id: 'library-planned',
+                label: 'Planned',
+                href: '/library/planned',
+            },
+            {
+                id: 'library-dropped',
+                label: 'Dropped',
+                href: '/library/dropped',
+            },
+            {
+                id: 'library-paused',
+                label: 'Paused',
+                href: '/library/paused',
+            },
         ],
     },
     {
