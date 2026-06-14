@@ -29,7 +29,7 @@
           onSelectItem={(item) => activeChildId.set(item.id)}
   />
 
-  <MainPanel activeNavItem={activeItem} />
+  <MainPanel activeSection={activeSection} activeItem={activeItem} />
 </div>
 
 <style>
