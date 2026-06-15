@@ -1,6 +1,7 @@
 <script lang="ts">
     import { closeAnimeDetail, openAnimeDetail } from '@lib/actions/animeDetail';
     import LibraryEntryCard from '@lib/components/blocks/LibraryEntryCard.svelte';
+    import LibraryToolbar from '@lib/components/blocks/LibraryToolbar.svelte';
     import AnimeDetail from '@lib/components/pages/AnimeDetail.svelte';
     import { animeRepository } from '@lib/repositories/animeRepository';
     import type { LibraryOrderBy, SortDirection } from '@lib/repositories/libraryRepository';
@@ -85,34 +86,7 @@
             <h1>Library - {activeItem.label}</h1>
         </header>
 
-        <div class="library-toolbar">
-            <label>
-                <span>Search</span>
-                <input type="search" bind:value={search} placeholder="Search anime..." />
-            </label>
-
-            <label>
-                <span>Sort by</span>
-                <select bind:value={orderBy}>
-                    <option value="dateUpdated">Date updated</option>
-                    <option value="dateAdded">Date added</option>
-                    <option value="title">Title</option>
-                    <option value="releaseDate">Release date</option>
-                </select>
-            </label>
-
-            <label>
-                <span>Direction</span>
-                <select bind:value={orderDirection}>
-                    <option value="asc">Ascending</option>
-                    <option value="desc">Descending</option>
-                </select>
-            </label>
-
-            <p class="result-count">
-                {libraryResult.total} result{libraryResult.total === 1 ? '' : 's'}
-            </p>
-        </div>
+        <LibraryToolbar bind:search bind:orderBy bind:orderDirection total={libraryResult.total} />
 
         {#if entries.length > 0}
             <div class="library-list">
@@ -147,39 +121,6 @@
 
     .page-header h1 {
         margin: 0;
-    }
-
-    .library-toolbar {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: end;
-        gap: 12px;
-    }
-
-    .library-toolbar label {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-
-    .library-toolbar span,
-    .result-count {
-        color: var(--color-text-muted);
-        font-size: 12px;
-    }
-
-    .library-toolbar input,
-    .library-toolbar select {
-        min-width: 180px;
-        padding: 8px 10px;
-        border: 1px solid var(--color-border);
-        border-radius: 8px;
-        color: var(--color-text);
-        background: var(--color-panel);
-    }
-
-    .result-count {
-        margin: 0 0 9px;
     }
 
     .library-list {
