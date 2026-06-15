@@ -8,5 +8,4 @@
     let {activeItem}: Props = $props();
 </script>
 
-<h1>Seasons</h1>
-<p>Selected view: {activeItem.label}</p>
+<h1>Seasons - {activeItem.label}</h1>

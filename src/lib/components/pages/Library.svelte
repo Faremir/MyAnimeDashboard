@@ -1,143 +1,105 @@
 <script lang="ts">
-  import { mockLibraryListItems } from '@lib/mock/library';
+    import AnimeDetail from '@lib/components/pages/AnimeDetail.svelte'
+    import LibraryEntryCard from "@lib/components/blocks/LibraryEntryCard.svelte";
 
-  import type { NavigationItem } from '@lib/types/navigation';
-  import type { LibraryStatus } from '@lib/types/library';
+    import type {LibraryStatus} from '@lib/types/library';
+    import type {NavigationItem} from '@lib/types/navigation';
+    import {
+        findMockAnimeById,
+        getMockAnimeRelations,
+        mockLibraryListItems,
+    } from '@lib/mock/library';
 
-  type Props = {
-      activeItem: NavigationItem;
-  };
+    import {selectedAnimeId} from '@lib/stores/anime';
+    import {closeAnimeDetail, openAnimeDetail,} from '@lib/actions/animeDetail';
 
-  let { activeItem }: Props = $props();
+    type Props = {
+        activeItem: NavigationItem;
+    };
 
-  const statusByNavigationId: Record<string, LibraryStatus | null> = {
-      library: null,
-      'library-watching': 'watching',
-      'library-completed': 'completed',
-      'library-planned': 'planned',
-      'library-dropped': 'dropped',
-      'library-paused': 'paused',
-  };
+    let {activeItem}: Props = $props();
 
-  let selectedStatus = $derived(statusByNavigationId[activeItem.id] ?? null);
+    const statusByNavigationId: Record<string, LibraryStatus | null> = {
+        library: null,
+        'library-watching': 'watching',
+        'library-completed': 'completed',
+        'library-planned': 'planned',
+        'library-dropped': 'dropped',
+        'library-paused': 'paused',
+    };
 
-  let entries = $derived(
-      selectedStatus
-          ? mockLibraryListItems.filter((entry) => entry.status === selectedStatus)
-          : mockLibraryListItems,
-  );
+    let selectedStatus = $derived(statusByNavigationId[activeItem.id] ?? null);
+
+    let entries = $derived(
+        selectedStatus
+            ? mockLibraryListItems.filter((entry) => entry.status === selectedStatus)
+            : mockLibraryListItems,
+    );
+
+    let selectedAnime = $derived(
+        $selectedAnimeId ? findMockAnimeById($selectedAnimeId) : undefined,
+    );
+
+    let selectedAnimeRelations = $derived(
+        $selectedAnimeId ? getMockAnimeRelations($selectedAnimeId) : [],
+    );
+
 </script>
 
-<section class="library-page">
-  <header class="page-header">
-    <h1>Library</h1>
-    <p>Selected view: {activeItem.label}</p>
-  </header>
+{#if selectedAnime}
+    <AnimeDetail
+        anime={selectedAnime}
+        relations={selectedAnimeRelations}
+        onBack={closeAnimeDetail}
+        onSelectAnime={openAnimeDetail}
+    />
+{:else}
+    <section class="library-page">
+        <header class="page-header">
+            <h1>Library - {activeItem.label}</h1>
+        </header>
 
-    {#if entries.length > 0}
-    <div class="library-list">
-      {#each entries as entry (entry.id)}
-        <article class="library-entry">
-          <div>
-            <h2>{entry.anime.title}</h2>
-
-              {#if entry.anime.titleEnglish}
-              <p class="muted">{entry.anime.titleEnglish}</p>
-            {/if}
-          </div>
-
-          <dl class="entry-meta">
-            <div>
-              <dt>Status</dt>
-              <dd>{entry.status}</dd>
+        {#if entries.length > 0}
+            <div class="library-list">
+                {#each entries as entry (entry.id)}
+                    <LibraryEntryCard
+                        entry={entry}
+                        onOpen={() => openAnimeDetail(entry.anime.id)}
+                    />
+                {/each}
             </div>
-
-            <div>
-              <dt>Progress</dt>
-              <dd>{entry.progress} / {entry.anime.episodes ?? '?'}</dd>
-            </div>
-
-              {#if entry.score}
-              <div>
-                <dt>Your score</dt>
-                <dd>{entry.score}/10</dd>
-              </div>
-            {/if}
-
-              {#if entry.anime.publicScore}
-              <div>
-                <dt>Public score</dt>
-                <dd>{entry.anime.publicScore}</dd>
-              </div>
-            {/if}
-          </dl>
-        </article>
-      {/each}
-    </div>
-  {:else}
-    <p class="empty-state">No anime found for this library view.</p>
-  {/if}
-</section>
+        {:else}
+            <p class="empty-state">No anime found for this library view.</p>
+        {/if}
+    </section>
+{/if}
 
 <style>
-  .library-page {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-  }
+    .library-page {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
 
-  .page-header {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-  }
+    .page-header {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
 
-  .page-header h1 {
-      margin: 0;
-  }
+    .page-header h1 {
+        margin: 0;
+    }
 
-  .muted,
-  .page-header p,
-  .empty-state {
-      color: var(--color-text-muted);
-  }
+    .library-list {
+        display: grid;
+        gap: 12px;
+    }
 
-  .library-list {
-      display: grid;
-      gap: 12px;
-  }
 
-  .library-entry {
-      display: flex;
-      justify-content: space-between;
-      gap: 24px;
-      padding: 16px;
-      border: 1px solid var(--color-border);
-      border-radius: 12px;
-      background: var(--color-panel);
-  }
+    .empty-state {
+        color: var(--color-text-muted);
+    }
 
-  .library-entry h2 {
-      margin: 0;
-      font-size: 18px;
-  }
 
-  .entry-meta {
-      display: flex;
-      gap: 16px;
-      margin: 0;
-  }
-
-  .entry-meta div {
-      min-width: 88px;
-  }
-
-  .entry-meta dt {
-      color: var(--color-text-muted);
-      font-size: 12px;
-  }
-
-  .entry-meta dd {
-      margin: 0;
-  }
 </style>

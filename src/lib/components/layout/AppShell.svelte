@@ -2,6 +2,11 @@
     import {navigationItems} from '@lib/config/navigation';
     import {activeSectionId, activeChildId} from '@lib/stores/navigation';
 
+    import {
+        selectNavigationItem,
+        selectNavigationSection,
+    } from '@lib/actions/navigation';
+
     import NavigationShell from '@lib/components/layout/NavigationShell.svelte';
     import MainPanel from './MainPanel.svelte';
 
@@ -22,15 +27,13 @@
         secondaryItems={secondaryItems}
         activeSection={activeSection}
         activeItem={activeItem}
-        onSelectSection={(item) => {
-            activeSectionId.set(item.id);
-            activeChildId.set(null);
-        }}
-        onSelectItem={(item) => activeChildId.set(item.id)}
+        onSelectSection={selectNavigationSection}
+        onSelectItem={selectNavigationItem}
     />
 
     <MainPanel activeSection={activeSection} activeItem={activeItem}/>
 </div>
+
 
 <style>
     .app-shell {

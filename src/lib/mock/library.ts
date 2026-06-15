@@ -1,5 +1,5 @@
-import type { Anime } from '@lib/types/anime';
-import type { AnimeLibraryEntry, AnimeLibraryListItem } from '@lib/types/library';
+import type {Anime, AnimeId, RelatedAnime} from '@lib/types/anime';
+import type {AnimeLibraryEntry, AnimeLibraryListItem} from '@lib/types/library';
 
 export const mockAnime: Anime[] = [
     {
@@ -39,7 +39,16 @@ export const mockAnime: Anime[] = [
         genres: ['Action', 'Adventure', 'Drama'],
         ageRating: 'r_17',
         publicScore: 8.7,
-        relations: [],
+        relations: [
+            {
+                relationType: 'sequel',
+                animeId: 3,
+            },
+            {
+                relationType: 'sequel',
+                animeId: 4,
+            },
+        ],
     },
     {
         id: 3,
@@ -60,6 +69,36 @@ export const mockAnime: Anime[] = [
             {
                 relationType: 'prequel',
                 animeId: 2,
+            },
+            {
+                relationType: 'sequel',
+                animeId: 4,
+            },
+        ],
+    },
+    {
+        id: 4,
+        externalIds: {
+            malId: 49388,
+        },
+        title: 'Vinland Saga Season 3',
+        mediaType: 'tv',
+        episodes: 24,
+        airingStatus: 'finished_airing',
+        releaseDate: '2023-01-10',
+        season: 'winter',
+        source: 'manga',
+        genres: ['Action', 'Adventure', 'Drama'],
+        ageRating: 'r_17',
+        publicScore: 8.8,
+        relations: [
+            {
+                relationType: 'prequel',
+                animeId: 2,
+            },
+            {
+                relationType: 'prequel',
+                animeId: 3,
             },
         ],
     },
@@ -96,3 +135,35 @@ export const mockLibraryListItems: AnimeLibraryListItem[] = mockLibraryEntries
         };
     })
     .filter((entry): entry is AnimeLibraryListItem => entry !== null);
+
+export const findMockAnimeById = (animeId: AnimeId) => {
+    return mockAnime.find((anime) => anime.id === animeId);
+};
+
+type MockAnimeRelationView = {
+    relationType: RelatedAnime['relationType'];
+    anime: Anime;
+};
+
+export const getMockAnimeRelations = (animeId: AnimeId): MockAnimeRelationView[] => {
+    const anime = findMockAnimeById(animeId);
+
+    if (!anime) {
+        return [];
+    }
+
+    return anime.relations
+        .map((relation): MockAnimeRelationView | null => {
+            const relatedAnime = findMockAnimeById(relation.animeId);
+
+            if (!relatedAnime) {
+                return null;
+            }
+
+            return {
+                relationType: relation.relationType,
+                anime: relatedAnime,
+            };
+        })
+        .filter((relation): relation is MockAnimeRelationView => relation !== null);
+};
