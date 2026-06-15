@@ -1,11 +1,11 @@
 <script lang="ts">
-  import type { NavigationItem } from '@lib/types/navigation';
+    import type { NavigationItem } from '@lib/types/navigation';
 
-  type Props = {
-    activeItem: NavigationItem;
-  };
+    type Props = {
+        activeItem: NavigationItem;
+    };
 
-  let { activeItem }: Props = $props();
+    let { activeItem }: Props = $props();
 </script>
 
 <h1>Dashboard</h1>
