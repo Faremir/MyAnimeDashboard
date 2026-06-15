@@ -1,17 +1,17 @@
-import { activeChildId, activeSectionId } from '@lib/state/navigation';
 import { closeAnimeDetail } from '@lib/actions/animeDetail';
+import { activeChildId, activeSectionId } from '@lib/state/navigation';
 
 import type { NavigationItem } from '@lib/types/navigation';
 
 export const selectNavigationSection = (item: NavigationItem) => {
-    closeAnimeDetail();
+  closeAnimeDetail();
 
-    activeSectionId.set(item.id);
-    activeChildId.set(null);
+  activeSectionId.set(item.id);
+  activeChildId.set(null);
 };
 
 export const selectNavigationItem = (item: NavigationItem) => {
-    closeAnimeDetail();
+  closeAnimeDetail();
 
-    activeChildId.set(item.id);
+  activeChildId.set(item.id);
 };

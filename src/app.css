@@ -1,37 +1,37 @@
 :root {
-    --color-bg: #111214;
-    --color-panel: #1e1f22;
-    --color-panel-alt: #2b2d31;
-    --color-border: #313338;
+  --color-bg: #111214;
+  --color-panel: #1e1f22;
+  --color-panel-alt: #2b2d31;
+  --color-border: #313338;
 
-    --color-text: #f2f3f5;
-    --color-text-muted: #b5bac1;
+  --color-text: #f2f3f5;
+  --color-text-muted: #b5bac1;
 
-    --color-accent: #5865f2;
-    --color-accent-hover: #4752c4;
+  --color-accent: #5865f2;
+  --color-accent-hover: #4752c4;
 
-    --font-sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: system-ui, 'Segoe UI', Roboto, sans-serif;
 
-    font-family: var(--font-sans), sans-serif;
-    color: var(--color-text);
-    background: var(--color-bg);
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-sans), sans-serif;
+  color: var(--color-text);
+  background: var(--color-bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body {
-    margin: 0;
+  margin: 0;
 }
 
 button,
 input,
 select,
 textarea {
-    font: inherit;
+  font: inherit;
 }
