@@ -83,7 +83,7 @@
                 type="button">Details</button
             >
         </div>
-        <div class="library-entry-row">
+        <div class="library-entry-row watch-state-controls">
             <WatchStateControls onAction={(action) => onWatchStateAction(entry, action)} status={entry.status} />
         </div>
     </div>
@@ -159,13 +159,6 @@
         object-fit: cover;
     }
 
-    .library-entry-meta {
-        display: flex;
-        flex-shrink: 0;
-        gap: 16px;
-        margin: 0;
-    }
-
     .library-entry-info {
         position: relative;
         z-index: 2;
@@ -191,6 +184,12 @@
         font-size: 12px;
     }
 
+    .library-entry-meta {
+        display: flex;
+        flex-shrink: 0;
+        gap: 16px;
+        margin: 0;
+    }
     .library-entry-meta div {
         min-width: 88px;
     }
@@ -202,6 +201,15 @@
 
     .library-entry-meta dd {
         margin: 0;
+    }
+
+    .watch-state-controls {
+        position: relative;
+        z-index: 3;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        pointer-events: auto;
     }
 
     .muted {

@@ -14,33 +14,34 @@
     };
 </script>
 
-<div aria-label="Watch state actions" class="watch-state-controls">
-    {#if status === 'planned'}
-        <button type="button" onclick={(event) => handleAction(event, 'start-watching')}> Start watching </button>
-    {:else if status === 'watching'}
-        <button type="button" onclick={(event) => handleAction(event, 'pause')}>Pause</button>
-        <button type="button" onclick={(event) => handleAction(event, 'drop')}>Drop</button>
-    {:else if status === 'paused'}
-        <button type="button" onclick={(event) => handleAction(event, 'resume')}>Resume</button>
-        <button type="button" onclick={(event) => handleAction(event, 'drop')}>Drop</button>
-    {:else if status === 'dropped'}
-        <button type="button" onclick={(event) => handleAction(event, 'restart')}>Start from beginning</button>
-    {:else if status === 'completed'}
-        <span class="completed-label">Completed</span>
-    {/if}
-</div>
+<!-- TODO: Replace text glyphs with real icons. -->
+{#if status === 'planned'}
+    <button
+        aria-label="Start watching"
+        title="Start watching"
+        type="button"
+        onclick={(event) => handleAction(event, 'start-watching')}>👁</button
+    >
+    <button aria-label="Drop" title="Drop" type="button" onclick={(event) => handleAction(event, 'drop')}>✕</button>
+{:else if status === 'watching'}
+    <button aria-label="Pause" title="Pause" type="button" onclick={(event) => handleAction(event, 'pause')}>⏸</button>
+    <button aria-label="Drop" title="Drop" type="button" onclick={(event) => handleAction(event, 'drop')}>✕</button>
+{:else if status === 'paused'}
+    <button aria-label="Resume" title="Resume" type="button" onclick={(event) => handleAction(event, 'resume')}
+        >👁</button
+    >
+    <button aria-label="Drop" title="Drop" type="button" onclick={(event) => handleAction(event, 'drop')}>✕</button>
+{:else if status === 'dropped'}
+    <button
+        aria-label="Start from beginning"
+        title="Start from beginning"
+        type="button"
+        onclick={(event) => handleAction(event, 'restart')}>↻</button
+    >
+{/if}
 
 <style>
-    .watch-state-controls {
-        position: relative;
-        z-index: 3;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        pointer-events: auto;
-    }
-
-    .watch-state-controls button {
+    button {
         padding: 6px 10px;
         border: 1px solid var(--color-border);
         border-radius: 8px;
@@ -48,14 +49,10 @@
         background: var(--color-background);
         cursor: pointer;
         width: 100%;
+        height: fit-content;
     }
 
-    .watch-state-controls button:hover {
+    button:hover {
         border-color: var(--color-accent);
-    }
-
-    .completed-label {
-        color: var(--color-text-muted);
-        font-size: 13px;
     }
 </style>
