@@ -18,6 +18,15 @@
         aria-label={`Open details for ${entry.anime.title}`}
         onclick={() => openAnimeDetail(entry.anime.id)}
     ></button>
+    <div class="entry-cover">
+        {#if entry.anime.coverImage}
+            <img src={entry.anime.coverImage} alt="" loading="lazy" />
+        {:else}
+            <div class="entry-cover-placeholder">
+                {entry.anime.title.slice(0, 1)}
+            </div>
+        {/if}
+    </div>
     <div class="entry-main">
         <h2>{entry.anime.title}</h2>
 
@@ -64,9 +73,10 @@
 <style>
     .library-entry {
         position: relative;
-        display: flex;
-        justify-content: space-between;
-        gap: 24px;
+        display: grid;
+        grid-template-columns: 72px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 16px;
         width: 100%;
         padding: 16px;
         border: 1px solid var(--color-border);
@@ -95,6 +105,34 @@
         outline: 2px solid var(--color-accent);
         outline-offset: 2px;
     }
+
+    .entry-cover {
+        position: relative;
+        z-index: 2;
+        width: 72px;
+        height: 96px;
+        overflow: hidden;
+        border-radius: 8px;
+        background: var(--color-panel-alt);
+        pointer-events: none;
+    }
+
+    .entry-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .entry-cover-placeholder {
+        display: grid;
+        place-items: center;
+        width: 100%;
+        height: 100%;
+        color: var(--color-text-muted);
+        font-size: 28px;
+        font-weight: 700;
+    }
+
 
     .entry-main,
     .entry-meta {

@@ -31,6 +31,12 @@
         ← Back
     </button>
 
+    {#if anime.bannerImage}
+        <div class="detail-banner">
+            <img src={anime.bannerImage} alt=""/>
+        </div>
+    {/if}
+
     <header class="detail-header">
         <div>
             <h1>{anime.title}</h1>
@@ -132,6 +138,22 @@
     .back-button {
         align-self: flex-start;
     }
+
+
+    .detail-banner {
+        height: 220px;
+        overflow: hidden;
+        border-radius: 16px;
+        border: 1px solid var(--color-border);
+        background: var(--color-panel);
+    }
+
+    .detail-banner img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
 
     .detail-header {
         display: flex;
