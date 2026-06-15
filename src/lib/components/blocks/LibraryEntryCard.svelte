@@ -1,30 +1,21 @@
 <script lang="ts">
     import {formatLabel, libraryStatusLabels,} from '@lib/formatters/library';
-    import {openAnimeDetail,} from '@lib/actions/animeDetail';
     import type {AnimeLibraryListItem} from "@lib/types/library";
 
     type Props = {
         entry: AnimeLibraryListItem;
         onOpen: () => void;
     };
-
-    let {entry}: Props = $props();
+    let {entry, onOpen}: Props = $props();
 </script>
 
 <article class="library-entry">
-    <button
-        class="library-entry-button"
-        type="button"
-        aria-label={`Open details for ${entry.anime.title}`}
-        onclick={() => openAnimeDetail(entry.anime.id)}
-    ></button>
+    <button class="library-entry-button" type="button" aria-label={`Open details for ${entry.anime.title}`} onclick={onOpen}></button>
     <div class="entry-cover">
         {#if entry.anime.coverImage}
-            <img src={entry.anime.coverImage} alt="" loading="lazy" />
+            <img src={entry.anime.coverImage} alt="" loading="lazy"/>
         {:else}
-            <div class="entry-cover-placeholder">
-                {entry.anime.title.slice(0, 1)}
-            </div>
+            <div class="entry-cover-placeholder">{entry.anime.title.slice(0, 1)}</div>
         {/if}
     </div>
     <div class="entry-main">

@@ -9,4 +9,4 @@
 </script>
 
 <h1>Dashboard</h1>
-<p>Selected view TEMP: {activeItem.label}</p>
+<p>Selected view: {activeItem.label}</p>
