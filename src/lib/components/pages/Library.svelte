@@ -1,6 +1,7 @@
 <script lang="ts">
     import { closeAnimeDetail, openAnimeDetail } from '@lib/actions/animeDetail';
     import LibraryEntryCard from '@lib/components/blocks/LibraryEntryCard.svelte';
+    import LibraryPagination from '@lib/components/blocks/LibraryPagination.svelte';
     import LibraryToolbar from '@lib/components/blocks/LibraryToolbar.svelte';
     import AnimeDetail from '@lib/components/pages/AnimeDetail.svelte';
     import { animeRepository } from '@lib/repositories/animeRepository';
@@ -71,6 +72,14 @@
         previousQuerySignature = querySignature;
         page = 1;
     });
+
+    const goToPreviousPage = () => {
+        page -= 1;
+    };
+
+    const goToNextPage = () => {
+        page += 1;
+    };
 </script>
 
 {#if selectedAnime}
@@ -98,11 +107,7 @@
             <p class="empty-state">No anime found for this library view.</p>
         {/if}
 
-        <div class="library-pagination">
-            <button type="button" disabled={page <= 1} onclick={() => (page -= 1)}> Previous</button>
-            <span>Page {page} of {totalPages}</span>
-            <button type="button" disabled={page >= totalPages} onclick={() => (page += 1)}> Next</button>
-        </div>
+        <LibraryPagination {page} {totalPages} onPrevious={goToPreviousPage} onNext={goToNextPage} />
     </section>
 {/if}
 
@@ -130,30 +135,5 @@
 
     .empty-state {
         color: var(--color-text-muted);
-    }
-
-    .library-pagination {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .library-pagination span {
-        color: var(--color-text-muted);
-        font-size: 13px;
-    }
-
-    .library-pagination button {
-        padding: 8px 12px;
-        border: 1px solid var(--color-border);
-        border-radius: 8px;
-        color: var(--color-text);
-        background: var(--color-panel);
-        cursor: pointer;
-    }
-
-    .library-pagination button:disabled {
-        cursor: not-allowed;
-        opacity: 0.5;
     }
 </style>
