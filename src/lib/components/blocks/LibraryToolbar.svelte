@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { LibraryOrderBy, SortDirection } from '@lib/repositories/libraryRepository';
+    import type { LibraryOrderBy, SortDirection } from '@lib/types/library';
 
     type Props = {
         search: string;

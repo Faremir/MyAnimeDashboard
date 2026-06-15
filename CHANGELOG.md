@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Cover and banner image display.
 - Relative date display for library activity.
 - Continuous integration workflow.
+- Watch state controls on library cards.
 
 ### Changed
 

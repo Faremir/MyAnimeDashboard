@@ -1,8 +1,10 @@
 import type { Anime, AnimeId } from './anime';
 
 export type LibraryEntryId = number;
-
 export type LibraryStatus = 'watching' | 'completed' | 'planned' | 'dropped' | 'paused';
+export type WatchStateAction = 'start-watching' | 'pause' | 'drop' | 'resume' | 'restart';
+export type LibraryOrderBy = 'dateAdded' | 'dateUpdated' | 'title' | 'releaseDate';
+export type SortDirection = 'asc' | 'desc';
 
 export type AnimeLibraryEntry = {
     id: LibraryEntryId;
@@ -19,4 +21,18 @@ export type AnimeLibraryEntry = {
 
 export type AnimeLibraryListItem = AnimeLibraryEntry & {
     anime: Anime;
+};
+export type LibraryQuery = {
+    status?: LibraryStatus | null;
+    search?: string;
+    orderBy?: LibraryOrderBy;
+    orderDirection?: SortDirection;
+    page?: number;
+    pageSize?: number;
+};
+export type LibraryQueryResult = {
+    items: AnimeLibraryListItem[];
+    total: number;
+    page: number;
+    pageSize: number;
 };

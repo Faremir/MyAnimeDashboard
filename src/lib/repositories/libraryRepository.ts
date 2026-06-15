@@ -1,25 +1,11 @@
 import { mockLibraryListItems } from '@lib/mock/library';
-import type { AnimeLibraryListItem, LibraryStatus } from '@lib/types/library';
-
-export type LibraryOrderBy = 'dateAdded' | 'dateUpdated' | 'title' | 'releaseDate';
-
-export type SortDirection = 'asc' | 'desc';
-
-export type LibraryQuery = {
-    status?: LibraryStatus | null;
-    search?: string;
-    orderBy?: LibraryOrderBy;
-    orderDirection?: SortDirection;
-    page?: number;
-    pageSize?: number;
-};
-
-export type LibraryQueryResult = {
-    items: AnimeLibraryListItem[];
-    total: number;
-    page: number;
-    pageSize: number;
-};
+import type {
+    AnimeLibraryListItem,
+    LibraryOrderBy,
+    LibraryQuery,
+    LibraryQueryResult,
+    SortDirection,
+} from '@lib/types/library';
 
 const normalizeSearch = (value: string): string => {
     return value.trim().toLowerCase();

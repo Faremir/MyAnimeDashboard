@@ -5,6 +5,20 @@ export type ExternalAnimeIds = {
     anilistId?: number;
 };
 
+export type AnimeMediaType = 'tv' | 'tv_special' | 'movie' | 'ova' | 'ona' | 'special' | 'music' | 'unknown';
+export type AnimeAiringStatus = 'finished_airing' | 'currently_airing' | 'not_yet_aired' | 'unknown';
+export type AnimeAgeRating = 'g' | 'pg' | 'pg_13' | 'r_17' | 'r_plus' | 'rx' | 'unknown';
+export type AnimeSeason = 'spring' | 'summer' | 'fall' | 'winter';
+export type AnimeSource =
+    | 'manga'
+    | 'light_novel'
+    | 'visual_novel'
+    | 'game'
+    | 'original'
+    | 'novel'
+    | 'web_manga'
+    | 'other'
+    | 'unknown';
 export type AnimeRelationType =
     | 'prequel'
     | 'sequel'
@@ -22,22 +36,6 @@ export type RelatedAnime = {
     relationType: AnimeRelationType;
     animeId: AnimeId;
 };
-
-export type AnimeMediaType = 'tv' | 'tv_special' | 'movie' | 'ova' | 'ona' | 'special' | 'music' | 'unknown';
-export type AnimeAiringStatus = 'finished_airing' | 'currently_airing' | 'not_yet_aired' | 'unknown';
-export type AnimeAgeRating = 'g' | 'pg' | 'pg_13' | 'r_17' | 'r_plus' | 'rx' | 'unknown';
-export type AnimeSeason = 'spring' | 'summer' | 'fall' | 'winter';
-export type AnimeSource =
-    | 'manga'
-    | 'light_novel'
-    | 'visual_novel'
-    | 'game'
-    | 'original'
-    | 'novel'
-    | 'web_manga'
-    | 'other'
-    | 'unknown';
-
 export type Anime = {
     id: AnimeId;
     externalIds: ExternalAnimeIds;
@@ -65,4 +63,8 @@ export type Anime = {
 
     publicScore?: number;
     relations: RelatedAnime[];
+};
+export type AnimeRelationView = {
+    relationType: RelatedAnime['relationType'];
+    anime: Anime;
 };

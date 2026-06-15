@@ -5,10 +5,9 @@
     import LibraryToolbar from '@lib/components/blocks/LibraryToolbar.svelte';
     import AnimeDetail from '@lib/components/pages/AnimeDetail.svelte';
     import { animeRepository } from '@lib/repositories/animeRepository';
-    import type { LibraryOrderBy, SortDirection } from '@lib/repositories/libraryRepository';
     import { libraryRepository } from '@lib/repositories/libraryRepository';
     import { selectedAnimeId } from '@lib/state/anime';
-    import type { LibraryStatus } from '@lib/types/library';
+    import type { LibraryOrderBy, LibraryStatus, SortDirection, WatchStateAction } from '@lib/types/library';
     import type { NavigationItem } from '@lib/types/navigation';
 
     let search = $state('');
@@ -59,6 +58,21 @@
 
     let previousQuerySignature = $state<string | null>(null);
 
+    const handleWatchStateAction = (entryId: number, action: WatchStateAction) => {
+        console.info('Watch state action selected:', {
+            entryId,
+            action,
+        });
+    };
+
+    const handlePreviousPage = () => {
+        page -= 1;
+    };
+
+    const handleNextPage = () => {
+        page += 1;
+    };
+
     $effect(() => {
         if (previousQuerySignature === null) {
             previousQuerySignature = querySignature;
@@ -72,14 +86,6 @@
         previousQuerySignature = querySignature;
         page = 1;
     });
-
-    const goToPreviousPage = () => {
-        page -= 1;
-    };
-
-    const goToNextPage = () => {
-        page += 1;
-    };
 </script>
 
 {#if selectedAnime}
@@ -100,14 +106,18 @@
         {#if entries.length > 0}
             <div class="library-list">
                 {#each entries as entry (entry.id)}
-                    <LibraryEntryCard {entry} onOpen={() => openAnimeDetail(entry.anime.id)} />
+                    <LibraryEntryCard
+                        {entry}
+                        onOpen={() => openAnimeDetail(entry.anime.id)}
+                        onWatchStateAction={(selectedEntry, action) => handleWatchStateAction(selectedEntry.id, action)}
+                    />
                 {/each}
             </div>
         {:else}
             <p class="empty-state">No anime found for this library view.</p>
         {/if}
 
-        <LibraryPagination {page} {totalPages} onPrevious={goToPreviousPage} onNext={goToNextPage} />
+        <LibraryPagination {page} {totalPages} onPrevious={handlePreviousPage} onNext={handleNextPage} />
     </section>
 {/if}
 

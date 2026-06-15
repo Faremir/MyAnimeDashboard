@@ -1,47 +1,47 @@
 <script lang="ts">
+    import WatchStateControls from '@lib/components/blocks/WatchStateControls.svelte';
     import { formatLabel, libraryStatusLabels } from '@lib/formatters/library';
-    import type { AnimeLibraryListItem } from '@lib/types/library';
+    import type { AnimeLibraryListItem, WatchStateAction } from '@lib/types/library';
     import Time from 'svelte-time';
 
     type Props = {
         entry: AnimeLibraryListItem;
         onOpen: () => void;
+        onWatchStateAction: (entry: AnimeLibraryListItem, action: WatchStateAction) => void;
     };
-    let { entry, onOpen }: Props = $props();
+    let { entry, onOpen, onWatchStateAction }: Props = $props();
 </script>
 
 <article class="library-entry">
-    <button
-        aria-label={`Open details for ${entry.anime.title}`}
-        class="library-entry-button"
-        onclick={onOpen}
-        type="button"
-    ></button>
-    <div class="entry-cover">
-        {#if entry.anime.coverImage}
-            <img src={entry.anime.coverImage} alt="" loading="lazy" />
-        {:else}
-            <div class="entry-cover-placeholder">{entry.anime.title.slice(0, 1)}</div>
-        {/if}
+    <div class="library-entry-column">
+        <div class="library-entry-row library-entry-cover">
+            {#if entry.anime.coverImage}
+                <img src={entry.anime.coverImage} alt="" loading="lazy" />
+            {:else}
+                <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/9/9b/MyAnimeList_favicon.svg"
+                    alt=""
+                    loading="lazy"
+                />
+            {/if}
+        </div>
     </div>
-    <div class="entry-main">
-        <h2>{entry.anime.title}</h2>
 
-        {#if entry.anime.titleEnglish}
+    <div class="library-entry-column">
+        <div class="library-entry-column library-entry-info">
+            <h2>{entry.anime.title}</h2>
+
             <p class="muted">{entry.anime.titleEnglish}</p>
-        {/if}
 
-        {#if entry.anime.genres.length > 0}
-            <div class="tag-list">
-                {#each entry.anime.genres as genre (genre)}
-                    <span>{genre}</span>
-                {/each}
-            </div>
-        {/if}
-    </div>
-
-    <dl class="entry-meta">
-        <div>
+            {#if entry.anime.genres.length > 0}
+                <div class="tag-list">
+                    {#each entry.anime.genres as genre (genre)}
+                        <span>{genre}</span>
+                    {/each}
+                </div>
+            {/if}
+        </div>
+        <dl class="library-entry-row library-entry-meta">
             <div>
                 <dt>Status</dt>
                 <dd>{formatLabel(libraryStatusLabels, entry.status)}</dd>
@@ -59,14 +59,6 @@
                 </div>
             {/if}
 
-            {#if entry.anime.publicScore}
-                <div>
-                    <dt>Public score</dt>
-                    <dd>{entry.anime.publicScore}</dd>
-                </div>
-            {/if}
-        </div>
-        <div>
             <div>
                 <dt>Added</dt>
                 <dd>
@@ -80,34 +72,64 @@
                     <Time relative timestamp={entry.updatedAt} />
                 </dd>
             </div>
+        </dl>
+    </div>
+    <div class="library-entry-column">
+        <div class="library-entry-row">
+            <button
+                aria-label={`Open details for ${entry.anime.title}`}
+                class="library-entry-button"
+                onclick={onOpen}
+                type="button">Details</button
+            >
         </div>
-    </dl>
+        <div class="library-entry-row">
+            <WatchStateControls onAction={(action) => onWatchStateAction(entry, action)} status={entry.status} />
+        </div>
+    </div>
 </article>
 
 <style>
     .library-entry {
         position: relative;
-        display: grid;
-        grid-template-columns: 72px minmax(0, 1fr) auto;
-        align-items: center;
         gap: 16px;
         width: 100%;
-        padding: 16px;
+        height: 220px;
         border: 1px solid var(--color-border);
         border-radius: 12px;
         color: inherit;
         text-align: left;
         background: var(--color-panel);
+        display: grid;
+        grid-auto-flow: column;
+        grid-template-columns: minmax(0, 150px) auto 20% 5px;
+        justify-items: stretch;
+        align-content: stretch;
+        align-items: stretch;
+    }
+
+    .library-entry-column {
+        position: relative;
+        align-items: center;
+        display: grid;
+        grid-auto-flow: row;
+    }
+
+    .library-entry-row {
+        position: relative;
+        display: grid;
+        grid-auto-flow: column;
+        align-items: center;
+        gap: 16px;
+        width: 100%;
     }
 
     .library-entry-button {
-        position: absolute;
-        inset: 0;
-        z-index: 1;
-        border: 0;
-        padding: 0;
-        border-radius: inherit;
-        background: transparent;
+        padding: 6px 10px;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        color: var(--color-text);
+        background: var(--color-background);
         cursor: pointer;
     }
 
@@ -120,35 +142,31 @@
         outline-offset: 2px;
     }
 
-    .entry-cover {
+    .library-entry-cover {
         position: relative;
         z-index: 2;
-        width: 72px;
-        height: 96px;
+        width: 100%;
+        height: 100%;
         overflow: hidden;
         border-radius: 8px;
         background: var(--color-panel-alt);
         pointer-events: none;
     }
 
-    .entry-cover img {
+    .library-entry-cover img {
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
 
-    .entry-cover-placeholder {
-        display: grid;
-        place-items: center;
-        width: 100%;
-        height: 100%;
-        color: var(--color-text-muted);
-        font-size: 28px;
-        font-weight: 700;
+    .library-entry-meta {
+        display: flex;
+        flex-shrink: 0;
+        gap: 16px;
+        margin: 0;
     }
 
-    .entry-main,
-    .entry-meta {
+    .library-entry-info {
         position: relative;
         z-index: 2;
         pointer-events: none;
@@ -173,23 +191,16 @@
         font-size: 12px;
     }
 
-    .entry-meta > div {
-        display: flex;
-        flex-shrink: 0;
-        gap: 16px;
-        margin: 0;
-    }
-
-    .entry-meta > div div {
+    .library-entry-meta div {
         min-width: 88px;
     }
 
-    .entry-meta dt {
+    .library-entry-meta dt {
         color: var(--color-text-muted);
         font-size: 12px;
     }
 
-    .entry-meta dd {
+    .library-entry-meta dd {
         margin: 0;
     }
 
