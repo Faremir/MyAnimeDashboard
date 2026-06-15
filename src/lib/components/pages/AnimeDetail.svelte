@@ -97,7 +97,13 @@
 
         <div>
             <dt>Release Date</dt>
-            <dd><Time timestamp={anime.releaseDate}/></dd>
+            <dd>
+                {#if anime.releaseDate}
+                    <Time timestamp={anime.releaseDate}/>
+                {:else}
+                    ?
+                {/if}
+            </dd>
         </div>
 
         <div>

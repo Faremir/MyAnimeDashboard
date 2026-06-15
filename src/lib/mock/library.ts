@@ -116,6 +116,15 @@ export const mockLibraryEntries: AnimeLibraryEntry[] = [
     },
     {
         id: 2,
+        animeId: 4,
+        status: 'watching',
+        progress: 1,
+        score: 10,
+        addedAt: new Date("2026-03-15T13:00:00Z"),
+        updatedAt: new Date("2026-06-15T13:00:00Z"),
+    },
+    {
+        id: 3,
         animeId: 3,
         status: 'completed',
         progress: 24,

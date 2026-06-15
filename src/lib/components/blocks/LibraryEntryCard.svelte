@@ -65,12 +65,12 @@
         <div>
             <div>
                 <dt>Added</dt>
-                <Time relative timestamp={entry.addedAt}/>
+                <dd><Time relative timestamp={entry.addedAt}/></dd>
             </div>
 
             <div>
                 <dt>Updated</dt>
-                <Time relative timestamp={entry.updatedAt}/>
+                <dd><Time relative timestamp={entry.updatedAt}/></dd>
             </div>
         </div>
     </dl>
