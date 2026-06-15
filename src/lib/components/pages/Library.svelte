@@ -1,19 +1,15 @@
 <script lang="ts">
-    import AnimeDetail from '@lib/components/pages/AnimeDetail.svelte'
+    import {closeAnimeDetail, openAnimeDetail,} from '@lib/actions/animeDetail';
     import LibraryEntryCard from "@lib/components/blocks/LibraryEntryCard.svelte";
-
-    import type {LibraryStatus} from '@lib/types/library';
-    import type {NavigationItem} from '@lib/types/navigation';
+    import AnimeDetail from '@lib/components/pages/AnimeDetail.svelte'
     import {animeRepository} from '@lib/repositories/animeRepository';
+    import type {LibraryOrderBy, SortDirection,} from '@lib/repositories/libraryRepository';
     import {libraryRepository} from '@lib/repositories/libraryRepository';
 
     import {selectedAnimeId} from '@lib/state/anime';
-    import {closeAnimeDetail, openAnimeDetail,} from '@lib/actions/animeDetail';
 
-    import type {
-        LibraryOrderBy,
-        SortDirection,
-    } from '@lib/repositories/libraryRepository';
+    import type {LibraryStatus} from '@lib/types/library';
+    import type {NavigationItem} from '@lib/types/navigation';
 
     let search = $state('');
     let orderBy = $state<LibraryOrderBy>('dateUpdated');
@@ -33,6 +29,8 @@
         'library-dropped': 'dropped',
         'library-paused': 'paused',
     };
+    let page = $state(1);
+    const pageSize = 20;
 
     let selectedStatus = $derived(statusByNavigationId[activeItem.id] ?? null);
     let libraryResult = $derived(
@@ -41,15 +39,23 @@
             search,
             orderBy,
             orderDirection,
-            page: 1,
-            pageSize: 20,
+            page,
+            pageSize,
         }),
     );
-
     let entries = $derived(libraryResult.items);
+    let totalPages = $derived(Math.max(1, Math.ceil(libraryResult.total / libraryResult.pageSize)));
     let selectedAnime = $derived($selectedAnimeId ? animeRepository.findById($selectedAnimeId) : undefined);
     let selectedAnimeRelations = $derived($selectedAnimeId ? animeRepository.getRelations($selectedAnimeId) : []);
 
+    $effect(() => {
+        search;
+        selectedStatus;
+        orderBy;
+        orderDirection;
+
+        page = 1;
+    });
 </script>
 
 {#if selectedAnime}
@@ -110,6 +116,12 @@
         {:else}
             <p class="empty-state">No anime found for this library view.</p>
         {/if}
+
+        <div class="library-pagination">
+            <button type="button" disabled={page <= 1} onclick={() => page -= 1}> Previous</button>
+            <span>Page {page} of {totalPages}</span>
+            <button type="button" disabled={page >= totalPages} onclick={() => page += 1}> Next</button>
+        </div>
     </section>
 {/if}
 
@@ -168,10 +180,32 @@
         gap: 12px;
     }
 
-
     .empty-state {
         color: var(--color-text-muted);
     }
 
+    .library-pagination {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
 
+    .library-pagination span {
+        color: var(--color-text-muted);
+        font-size: 13px;
+    }
+
+    .library-pagination button {
+        padding: 8px 12px;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        color: var(--color-text);
+        background: var(--color-panel);
+        cursor: pointer;
+    }
+
+    .library-pagination button:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
 </style>
