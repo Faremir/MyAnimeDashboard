@@ -1,49 +1,75 @@
-# MyAnimeDashboard
+# My Anime Dashboard
 
-# Svelte + TS + Vite
+[![CI](https://github.com/Faremir/MyAnimeDashboard/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Faremir/MyAnimeDashboard/actions/workflows/ci.yml)
+![Status](https://img.shields.io/badge/status-early%20development-orange)
+![Stable release](https://img.shields.io/badge/stable%20release-not%20available-lightgrey)
+![Platform](https://img.shields.io/badge/platform-desktop%20planned-blue)
+![MyAnimeList sync](https://img.shields.io/badge/MyAnimeList%20sync-planned-blueviolet)
 
-This template should help get you started developing with Svelte and TypeScript in Vite.
+**My Anime Dashboard** is a desktop-style anime library app for tracking what you are watching, what you have completed, what you plan to watch, and what you may want to return to later.
 
-## Recommended IDE Setup
+The app is currently in early development and is not ready for regular use yet.
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
+## What It Will Do
 
-## Need an official Svelte framework?
+My Anime Dashboard is intended to become a personal anime tracking app with:
 
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
+- A clean dashboard for your anime activity
+- A searchable anime library
+- Status groups such as Watching, Completed, Planned, Paused, and Dropped
+- Anime detail pages with metadata, images, scores, genres, and related titles
+- Sorting and filtering for larger libraries
+- Local data storage
+- MyAnimeList synchronization
+- A desktop installable version
 
-## Technical considerations
+## Current Status
 
-**Why use this over SvelteKit?**
+The app currently has an early working interface with:
 
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
+- Library browsing
+- Anime detail pages
+- Related anime navigation
+- Search
+- Sorting
+- Pagination
+- Cover and banner images
+- Temporary mock anime data
 
-This template contains as little as possible to get started with Vite + TypeScript + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
+The current data is temporary test data. Real local storage and account synchronization are planned for a later stage.
 
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
+## Planned Platforms
 
-**Why `global.d.ts` instead of `compilerOptions.types` inside `jsconfig.json` or `tsconfig.json`?**
+The goal is to make the app available as a desktop application.
 
-Setting `compilerOptions.types` shuts out all other types not explicitly listed in the configuration. Using triple-slash references keeps the default TypeScript setting of accepting type information from the entire workspace, while also adding `svelte` and `vite/client` type information.
+Planned target platforms:
 
-**Why include `.vscode/extensions.json`?**
+- Windows
+- Later possibly Linux
+- Later possibly macOS
 
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
+## MyAnimeList Support
 
-**Why enable `allowJs` in the TS template?**
+MyAnimeList login and synchronization are planned.
 
-While `allowJs: false` would indeed prevent the use of `.js` files in the project, it does not prevent the use of JavaScript syntax in `.svelte` files. In addition, it would force `checkJs: false`, bringing the worst of both worlds: not being able to guarantee the entire codebase is TypeScript, and also having worse typechecking for the existing JavaScript. In addition, there are valid use cases in which a mixed codebase may be relevant.
+The intended goal is to let users connect their MyAnimeList account so their anime list, statuses, scores, and progress can be kept in sync.
 
-**Why is HMR not preserving my local component state?**
+This feature is not available yet.
 
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/rixo/svelte-hmr#svelte-hmr).
+## Installation
 
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
+The app is not installable yet.
 
-```ts
-// store.ts
-// An extremely simple external store
-import { writable } from 'svelte/store';
-export default writable(0);
-```
+A downloadable version will be added when the project reaches a usable desktop-app stage.
+
+## Releases
+
+There is no stable release yet.
+
+Release history will be tracked in [CHANGELOG.md](CHANGELOG.md) once public/test builds begin.
+
+## Development Status
+
+This project is under active development.
+
+Expect missing features, incomplete screens, temporary data, and breaking changes until the first usable release.
