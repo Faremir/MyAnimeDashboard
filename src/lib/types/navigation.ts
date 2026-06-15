@@ -1,4 +1,4 @@
-export type NavigationIcon = | 'dashboard' | 'seasons' | 'calendar' | 'library' | 'settings' ;
+export type NavigationIcon = | 'dashboard' | 'seasons' | 'calendar' | 'library' | 'settings';
 
 export type NavigationItem = {
     id: string;

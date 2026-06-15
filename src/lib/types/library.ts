@@ -1,4 +1,4 @@
-import type { Anime, AnimeId } from './anime';
+import type {Anime, AnimeId} from './anime';
 
 export type LibraryEntryId = number;
 
