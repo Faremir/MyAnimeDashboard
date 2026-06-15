@@ -1,4 +1,4 @@
-import { activeChildId, activeSectionId } from '@lib/stores/navigation';
+import { activeChildId, activeSectionId } from '@lib/state/navigation';
 import { closeAnimeDetail } from '@lib/actions/animeDetail';
 
 import type { NavigationItem } from '@lib/types/navigation';

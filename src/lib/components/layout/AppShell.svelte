@@ -1,6 +1,6 @@
 <script lang="ts">
     import {navigationItems} from '@lib/config/navigation';
-    import {activeSectionId, activeChildId} from '@lib/stores/navigation';
+    import {activeSectionId, activeChildId} from '@lib/state/navigation';
 
     import {
         selectNavigationItem,

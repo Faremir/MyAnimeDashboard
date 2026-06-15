@@ -1,4 +1,4 @@
-import { selectedAnimeId } from '@lib/stores/anime';
+import { selectedAnimeId } from '@lib/state/anime';
 
 import type { AnimeId } from '@lib/types/anime';
 

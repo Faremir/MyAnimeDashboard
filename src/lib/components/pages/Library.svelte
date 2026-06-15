@@ -4,13 +4,10 @@
 
     import type {LibraryStatus} from '@lib/types/library';
     import type {NavigationItem} from '@lib/types/navigation';
-    import {
-        findMockAnimeById,
-        getMockAnimeRelations,
-        mockLibraryListItems,
-    } from '@lib/mock/library';
+    import {animeRepository} from '@lib/repositories/animeRepository';
+    import {libraryRepository} from '@lib/repositories/libraryRepository';
 
-    import {selectedAnimeId} from '@lib/stores/anime';
+    import {selectedAnimeId} from '@lib/state/anime';
     import {closeAnimeDetail, openAnimeDetail,} from '@lib/actions/animeDetail';
 
     type Props = {
@@ -29,20 +26,9 @@
     };
 
     let selectedStatus = $derived(statusByNavigationId[activeItem.id] ?? null);
-
-    let entries = $derived(
-        selectedStatus
-            ? mockLibraryListItems.filter((entry) => entry.status === selectedStatus)
-            : mockLibraryListItems,
-    );
-
-    let selectedAnime = $derived(
-        $selectedAnimeId ? findMockAnimeById($selectedAnimeId) : undefined,
-    );
-
-    let selectedAnimeRelations = $derived(
-        $selectedAnimeId ? getMockAnimeRelations($selectedAnimeId) : [],
-    );
+    let entries = $derived(selectedStatus ? libraryRepository.listByStatus(selectedStatus) : libraryRepository.list());
+    let selectedAnime = $derived($selectedAnimeId ? animeRepository.findById($selectedAnimeId) : undefined);
+    let selectedAnimeRelations = $derived($selectedAnimeId ? animeRepository.getRelations($selectedAnimeId) : []);
 
 </script>
 
