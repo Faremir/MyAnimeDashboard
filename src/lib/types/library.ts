@@ -18,9 +18,8 @@ export type AnimeLibraryEntry = {
     score?: number;
     notes?: string;
 
-    startedAt?: string;
-    completedAt?: string;
-    updatedAt?: string;
+    addedAt: Date;
+    updatedAt: Date;
 };
 
 export type AnimeLibraryListItem = AnimeLibraryEntry & {

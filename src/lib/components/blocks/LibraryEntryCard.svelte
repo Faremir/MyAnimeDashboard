@@ -1,4 +1,6 @@
 <script lang="ts">
+    import Time from "svelte-time";
+
     import {formatLabel, libraryStatusLabels,} from '@lib/formatters/library';
     import type {AnimeLibraryListItem} from "@lib/types/library";
 
@@ -36,28 +38,41 @@
 
     <dl class="entry-meta">
         <div>
-            <dt>Status</dt>
-            <dd>{formatLabel(libraryStatusLabels, entry.status)}</dd>
-        </div>
+            <div>
+                <dt>Status</dt>
+                <dd>{formatLabel(libraryStatusLabels, entry.status)}</dd>
+            </div>
 
+            <div>
+                <dt>Progress</dt>
+                <dd>{entry.progress} / {entry.anime.episodes ?? '?'}</dd>
+            </div>
+
+            {#if entry.score}
+                <div>
+                    <dt>Your score</dt>
+                    <dd>{entry.score}/10</dd>
+                </div>
+            {/if}
+
+            {#if entry.anime.publicScore}
+                <div>
+                    <dt>Public score</dt>
+                    <dd>{entry.anime.publicScore}</dd>
+                </div>
+            {/if}
+        </div>
         <div>
-            <dt>Progress</dt>
-            <dd>{entry.progress} / {entry.anime.episodes ?? '?'}</dd>
+            <div>
+                <dt>Added</dt>
+                <Time relative timestamp={entry.addedAt}/>
+            </div>
+
+            <div>
+                <dt>Updated</dt>
+                <Time relative timestamp={entry.updatedAt}/>
+            </div>
         </div>
-
-        {#if entry.score}
-            <div>
-                <dt>Your score</dt>
-                <dd>{entry.score}/10</dd>
-            </div>
-        {/if}
-
-        {#if entry.anime.publicScore}
-            <div>
-                <dt>Public score</dt>
-                <dd>{entry.anime.publicScore}</dd>
-            </div>
-        {/if}
     </dl>
 </article>
 
@@ -151,14 +166,14 @@
         font-size: 12px;
     }
 
-    .entry-meta {
+    .entry-meta > div {
         display: flex;
         flex-shrink: 0;
         gap: 16px;
         margin: 0;
     }
 
-    .entry-meta div {
+    .entry-meta > div div {
         min-width: 88px;
     }
 

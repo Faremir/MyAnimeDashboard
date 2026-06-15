@@ -26,7 +26,16 @@
     };
 
     let selectedStatus = $derived(statusByNavigationId[activeItem.id] ?? null);
-    let entries = $derived(selectedStatus ? libraryRepository.listByStatus(selectedStatus) : libraryRepository.list());
+    let libraryResult = $derived(
+        libraryRepository.findMany({
+            status: selectedStatus,
+            orderDirection: 'asc',
+            page: 1,
+            pageSize: 20,
+        }),
+    );
+
+    let entries = $derived(libraryResult.items);
     let selectedAnime = $derived($selectedAnimeId ? animeRepository.findById($selectedAnimeId) : undefined);
     let selectedAnimeRelations = $derived($selectedAnimeId ? animeRepository.getRelations($selectedAnimeId) : []);
 

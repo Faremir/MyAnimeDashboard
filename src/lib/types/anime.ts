@@ -51,7 +51,7 @@ export type Anime = {
     episodes?: number;
     airingStatus: AnimeAiringStatus;
 
-    releaseDate?: string;
+    releaseDate?: Date;
     season?: AnimeSeason;
 
     source: AnimeSource;

@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Time from "svelte-time";
     import type {Anime, AnimeRelationType} from '@lib/types/anime';
 
     import {
@@ -92,6 +93,11 @@
                     ?
                 {/if}
             </dd>
+        </div>
+
+        <div>
+            <dt>Release Date</dt>
+            <dd><Time timestamp={anime.releaseDate}/></dd>
         </div>
 
         <div>
