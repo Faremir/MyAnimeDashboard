@@ -1,6 +1,7 @@
 import { mockScheduledEpisodes } from '@lib/mock/schedule';
-import type { ScheduleDay, ScheduledEpisode } from '@lib/types/schedule';
+import type { ScheduleDay, ScheduledEpisode, ScheduleFilterStatus, WeekStartDay } from '@lib/types/schedule';
 
+const daysInWeek = 7;
 const millisecondsInDay = 24 * 60 * 60 * 1000;
 
 const startOfDay = (date: Date): Date => {
@@ -15,22 +16,68 @@ const isSameDay = (left: Date, right: Date): boolean => {
     return startOfDay(left).getTime() === startOfDay(right).getTime();
 };
 
+const isDateInRange = (date: Date, start: Date, end: Date): boolean => {
+    const time = date.getTime();
+
+    return time >= start.getTime() && time < end.getTime();
+};
+
 const sortEpisodesByAirTime = (episodes: ScheduledEpisode[]): ScheduledEpisode[] => {
     return [...episodes].sort((left, right) => left.airDateTime.getTime() - right.airDateTime.getTime());
 };
 
+const matchesFilter = (episode: ScheduledEpisode, filterStatus: ScheduleFilterStatus): boolean => {
+    if (filterStatus === 'all') {
+        return true;
+    }
+
+    if (filterStatus === 'not-in-library') {
+        return episode.libraryStatus === undefined;
+    }
+
+    return episode.libraryStatus === filterStatus;
+};
+
+const createScheduleDays = (weekStart: Date, episodes: ScheduledEpisode[]): ScheduleDay[] => {
+    return Array.from({ length: daysInWeek }, (_, dayOffset): ScheduleDay => {
+        const date = addDays(weekStart, dayOffset);
+        const dayEpisodes = episodes.filter((episode) => isSameDay(episode.airDateTime, date));
+
+        return {
+            date,
+            episodes: sortEpisodesByAirTime(dayEpisodes),
+        };
+    });
+};
+
 export const scheduleRepository = {
-    findWeek(startDate: Date = new Date('2026-06-15T00:00:00')): ScheduleDay[] {
-        const weekStart = startOfDay(startDate);
+    getWeekStart(date: Date, weekStartsOn: WeekStartDay): Date {
+        const dayStart = startOfDay(date);
+        const dayOfWeek = dayStart.getDay();
 
-        return Array.from({ length: 7 }, (_, dayOffset): ScheduleDay => {
-            const date = addDays(weekStart, dayOffset);
-            const episodes = mockScheduledEpisodes.filter((episode) => isSameDay(episode.airDateTime, date));
+        const offset = weekStartsOn === 'monday' ? (dayOfWeek === 0 ? -6 : 1 - dayOfWeek) : -dayOfWeek;
 
-            return {
-                date,
-                episodes: sortEpisodesByAirTime(episodes),
-            };
-        });
+        return addDays(dayStart, offset);
+    },
+
+    addWeeks(date: Date, weeks: number): Date {
+        return addDays(date, weeks * daysInWeek);
+    },
+
+    isCurrentDay(date: Date, currentDate: Date = new Date()): boolean {
+        return isSameDay(date, currentDate);
+    },
+
+    findWeek(weekStart: Date, weekStartsOn: WeekStartDay, filterStatus: ScheduleFilterStatus = 'all'): ScheduleDay[] {
+        const normalizedWeekStart = this.getWeekStart(weekStart, weekStartsOn);
+        const weekEnd = this.addWeeks(normalizedWeekStart, 1);
+
+        const weekEpisodes = mockScheduledEpisodes.filter(
+            (episode) =>
+                isDateInRange(episode.airDateTime, normalizedWeekStart, weekEnd) &&
+                matchesFilter(episode, filterStatus),
+        );
+
+        return createScheduleDays(normalizedWeekStart, weekEpisodes);
     },
 };

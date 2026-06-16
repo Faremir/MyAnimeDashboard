@@ -3,6 +3,10 @@ import type { LibraryStatus, WatchStateAction } from './library';
 
 export type ScheduleEpisodeId = number;
 
+export type WeekStartDay = 'monday' | 'sunday';
+
+export type ScheduleFilterStatus = 'all' | 'not-in-library' | LibraryStatus;
+
 export type ScheduledEpisode = {
     id: ScheduleEpisodeId;
     anime: Anime;

@@ -3,7 +3,7 @@
     import { scheduleRepository } from '@lib/repositories/scheduleRepository';
     import type { WatchStateAction } from '@lib/types/library';
     import type { NavigationItem } from '@lib/types/navigation';
-    import type { ScheduledEpisode } from '@lib/types/schedule';
+    import type { ScheduledEpisode, ScheduleFilterStatus, WeekStartDay } from '@lib/types/schedule';
 
     type Props = {
         activeItem: NavigationItem;
@@ -11,7 +11,16 @@
 
     let { activeItem }: Props = $props();
 
-    const scheduleDays = scheduleRepository.findWeek();
+    // TODO: Replace with user setting once settings persistence exists.
+    const weekStartsOn: WeekStartDay = 'monday';
+
+    let filterStatus = $state<ScheduleFilterStatus>('all');
+    let visibleWeekStart = $state(scheduleRepository.getWeekStart(new Date(), weekStartsOn));
+
+    const scheduleDays = $derived(scheduleRepository.findWeek(visibleWeekStart, weekStartsOn, filterStatus));
+
+    const currentWeekStart = $derived(scheduleRepository.getWeekStart(new Date(), weekStartsOn));
+    const isViewingCurrentWeek = $derived(visibleWeekStart.getTime() === currentWeekStart.getTime());
 
     const formatDayName = (date: Date): string => {
         return new Intl.DateTimeFormat(undefined, {
@@ -24,6 +33,30 @@
             month: 'short',
             day: 'numeric',
         }).format(date);
+    };
+
+    const formatWeekRange = (weekStart: Date): string => {
+        const weekEnd = scheduleRepository.addWeeks(weekStart, 1);
+        weekEnd.setDate(weekEnd.getDate() - 1);
+
+        const formatter = new Intl.DateTimeFormat(undefined, {
+            month: 'short',
+            day: 'numeric',
+        });
+
+        return `${formatter.format(weekStart)} – ${formatter.format(weekEnd)}`;
+    };
+
+    const showPreviousWeek = () => {
+        visibleWeekStart = scheduleRepository.addWeeks(visibleWeekStart, -1);
+    };
+
+    const showCurrentWeek = () => {
+        visibleWeekStart = currentWeekStart;
+    };
+
+    const showNextWeek = () => {
+        visibleWeekStart = scheduleRepository.addWeeks(visibleWeekStart, 1);
     };
 
     const handleOpenAnime = (episode: ScheduledEpisode) => {
@@ -52,14 +85,42 @@
 
 <section class="schedule-page">
     <header class="page-header">
-        <p class="eyebrow">{activeItem.label}</p>
-        <h1>Schedule</h1>
-        <p>Mock weekly calendar for airing episodes and watch actions.</p>
+        <div>
+            <p class="eyebrow">{activeItem.label}</p>
+            <h1>Schedule</h1>
+            <p>Mock weekly calendar for airing episodes and watch actions.</p>
+        </div>
+
+        <div class="week-controls" aria-label="Schedule week navigation">
+            <button type="button" onclick={showPreviousWeek}>Previous week</button>
+            <button type="button" disabled={isViewingCurrentWeek} onclick={showCurrentWeek}> Current week </button>
+            <button type="button" onclick={showNextWeek}>Next week</button>
+        </div>
     </header>
+
+    <section class="schedule-toolbar" aria-label="Schedule filters">
+        <div>
+            <p class="week-label">Week</p>
+            <p class="week-range">{formatWeekRange(visibleWeekStart)}</p>
+        </div>
+
+        <label>
+            <span>Filter</span>
+            <select bind:value={filterStatus}>
+                <option value="all">All anime</option>
+                <option value="watching">Watching</option>
+                <option value="planned">Planned</option>
+                <option value="paused">Paused</option>
+                <option value="dropped">Dropped</option>
+                <option value="completed">Completed</option>
+                <option value="not-in-library">Not in library</option>
+            </select>
+        </label>
+    </section>
 
     <div class="schedule-calendar" aria-label="Weekly anime schedule">
         {#each scheduleDays as day (day.date.toISOString())}
-            <section class="schedule-day">
+            <section class:current-day={scheduleRepository.isCurrentDay(day.date)} class="schedule-day">
                 <header class="schedule-day-header">
                     <h2>{formatDayName(day.date)}</h2>
                     <p>{formatDayDate(day.date)}</p>
@@ -91,21 +152,28 @@
         gap: 24px;
     }
 
-    .page-header {
+    .page-header,
+    .schedule-toolbar {
         display: flex;
-        flex-direction: column;
-        gap: 4px;
+        flex-wrap: wrap;
+        align-items: end;
+        justify-content: space-between;
+        gap: 16px;
     }
 
     .page-header h1,
-    .page-header p {
+    .page-header p,
+    .week-label,
+    .week-range {
         margin: 0;
     }
 
     .eyebrow,
     .page-header p,
     .schedule-day-header p,
-    .empty-day {
+    .empty-day,
+    .week-label,
+    .schedule-toolbar span {
         color: var(--color-text-muted);
     }
 
@@ -113,6 +181,59 @@
         font-size: 12px;
         text-transform: uppercase;
         letter-spacing: 0.08em;
+    }
+
+    .week-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .week-controls button,
+    .schedule-toolbar select {
+        padding: 8px 10px;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        color: var(--color-text);
+        background: var(--color-panel);
+    }
+
+    .week-controls button {
+        cursor: pointer;
+    }
+
+    .week-controls button:hover:not(:disabled) {
+        border-color: var(--color-accent);
+    }
+
+    .week-controls button:disabled {
+        cursor: not-allowed;
+        opacity: 0.55;
+    }
+
+    .schedule-toolbar {
+        padding: 14px;
+        border: 1px solid var(--color-border);
+        border-radius: 16px;
+        background: var(--color-panel);
+    }
+
+    .week-label,
+    .schedule-toolbar span {
+        font-size: 12px;
+    }
+
+    .week-range {
+        margin-top: 2px;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .schedule-toolbar label {
+        display: flex;
+        min-width: 180px;
+        flex-direction: column;
+        gap: 4px;
     }
 
     .schedule-calendar {
@@ -132,6 +253,11 @@
         border: 1px solid var(--color-border);
         border-radius: 16px;
         background: var(--color-background);
+    }
+
+    .schedule-day.current-day {
+        border-color: color-mix(in srgb, white 75%, var(--color-border));
+        background: color-mix(in srgb, var(--color-accent) 8%, var(--color-background));
     }
 
     .schedule-day-header h2,
