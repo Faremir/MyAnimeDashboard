@@ -11,15 +11,15 @@
     let { search = $bindable(), orderBy = $bindable(), orderDirection = $bindable(), total }: Props = $props();
 </script>
 
-<div class="library-toolbar">
-    <label>
-        <span>Search</span>
-        <input type="search" bind:value={search} placeholder="Search anime..." />
+<div class="toolbar">
+    <label class="form-field" for="search">
+        <span class="form-label">Search</span>
+        <input bind:value={search} class="input" id="search" placeholder="Search anime..." type="search" />
     </label>
 
-    <label>
-        <span>Sort by</span>
-        <select bind:value={orderBy}>
+    <label class="form-field" for="orderBy">
+        <span class="form-label">Sort by</span>
+        <select bind:value={orderBy} class="select" id="orderBy">
             <option value="dateUpdated">Date updated</option>
             <option value="dateAdded">Date added</option>
             <option value="title">Title</option>
@@ -27,9 +27,9 @@
         </select>
     </label>
 
-    <label>
-        <span>Direction</span>
-        <select bind:value={orderDirection}>
+    <label class="form-field" for="orderDirection">
+        <span class="form-label">Direction</span>
+        <select bind:value={orderDirection} class="select" id="orderDirection">
             <option value="asc">Ascending</option>
             <option value="desc">Descending</option>
         </select>
@@ -39,36 +39,9 @@
 </div>
 
 <style>
-    .library-toolbar {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: end;
-        gap: 12px;
-    }
-
-    .library-toolbar label {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-
-    .library-toolbar span,
-    .result-count {
-        color: var(--color-text-muted);
-        font-size: 12px;
-    }
-
-    .library-toolbar input,
-    .library-toolbar select {
-        min-width: 180px;
-        padding: 8px 10px;
-        border: 1px solid var(--color-border);
-        border-radius: 8px;
-        color: var(--color-text);
-        background: var(--color-panel);
-    }
-
     .result-count {
         margin: 0 0 9px;
+        color: var(--color-text-muted);
+        font-size: 12px;
     }
 </style>

@@ -93,12 +93,15 @@
         anime={selectedAnime}
         relations={selectedAnimeRelations}
         onBack={closeAnimeDetail}
-        onSelectAnime={openAnimeDetail}
-    />
+        onSelectAnime={openAnimeDetail} />
 {:else}
-    <section class="library-page">
+    <section class="page">
         <header class="page-header">
-            <h1>Library - {activeItem.label}</h1>
+            <div class="page-heading">
+                <p class="eyebrow">{activeItem.label}</p>
+                <h1>Library</h1>
+                <p class="muted">Your library.</p>
+            </div>
         </header>
 
         <LibraryToolbar bind:search bind:orderBy bind:orderDirection total={libraryResult.total} />
@@ -109,8 +112,8 @@
                     <LibraryEntryCard
                         {entry}
                         onOpen={() => openAnimeDetail(entry.anime.id)}
-                        onWatchStateAction={(selectedEntry, action) => handleWatchStateAction(selectedEntry.id, action)}
-                    />
+                        onWatchStateAction={(selectedEntry, action) =>
+                            handleWatchStateAction(selectedEntry.id, action)} />
                 {/each}
             </div>
         {:else}
@@ -122,22 +125,6 @@
 {/if}
 
 <style>
-    .library-page {
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-    }
-
-    .page-header {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-
-    .page-header h1 {
-        margin: 0;
-    }
-
     .library-list {
         display: grid;
         gap: 12px;

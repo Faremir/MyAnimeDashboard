@@ -3,7 +3,7 @@
     import { scheduleRepository } from '@lib/repositories/scheduleRepository';
     import type { WatchStateAction } from '@lib/types/library';
     import type { NavigationItem } from '@lib/types/navigation';
-    import type { ScheduledEpisode, ScheduleFilterStatus, WeekStartDay } from '@lib/types/schedule';
+    import type { ScheduleDay, ScheduledEpisode, ScheduleFilterStatus, WeekStartDay } from '@lib/types/schedule';
 
     type Props = {
         activeItem: NavigationItem;
@@ -16,15 +16,50 @@
 
     let filterStatus = $state<ScheduleFilterStatus>('all');
     let visibleWeekStart = $state(scheduleRepository.getWeekStart(new Date(), weekStartsOn));
+    let selectedDayKey = $state('');
 
-    const scheduleDays = $derived(scheduleRepository.findWeek(visibleWeekStart, weekStartsOn, filterStatus));
+    const getDayKey = (date: Date): string => {
+        return [
+            date.getFullYear(),
+            String(date.getMonth() + 1).padStart(2, '0'),
+            String(date.getDate()).padStart(2, '0'),
+        ].join('-');
+    };
 
-    const currentWeekStart = $derived(scheduleRepository.getWeekStart(new Date(), weekStartsOn));
-    const isViewingCurrentWeek = $derived(visibleWeekStart.getTime() === currentWeekStart.getTime());
+    let scheduleDays = $derived(scheduleRepository.findWeek(visibleWeekStart, weekStartsOn, filterStatus));
+
+    let currentWeekStart = $derived(scheduleRepository.getWeekStart(new Date(), weekStartsOn));
+
+    let isViewingCurrentWeek = $derived(visibleWeekStart.getTime() === currentWeekStart.getTime());
+
+    let selectedDay = $derived(scheduleDays.find((day) => getDayKey(day.date) === selectedDayKey) ?? scheduleDays[0]);
+
+    let weekEpisodeCount = $derived(scheduleDays.reduce((total, day) => total + day.episodes.length, 0));
+
+    $effect(() => {
+        if (scheduleDays.length === 0) {
+            return;
+        }
+
+        const selectedDayExists = scheduleDays.some((day) => getDayKey(day.date) === selectedDayKey);
+
+        if (selectedDayExists) {
+            return;
+        }
+
+        const currentDayInWeek = scheduleDays.find((day) => scheduleRepository.isCurrentDay(day.date));
+        selectedDayKey = getDayKey(currentDayInWeek?.date ?? scheduleDays[0].date);
+    });
 
     const formatDayName = (date: Date): string => {
         return new Intl.DateTimeFormat(undefined, {
             weekday: 'short',
+        }).format(date);
+    };
+
+    const formatFullDayName = (date: Date): string => {
+        return new Intl.DateTimeFormat(undefined, {
+            weekday: 'long',
         }).format(date);
     };
 
@@ -47,30 +82,29 @@
         return `${formatter.format(weekStart)} – ${formatter.format(weekEnd)}`;
     };
 
+    const selectDay = (day: ScheduleDay) => {
+        selectedDayKey = getDayKey(day.date);
+    };
+
     const showPreviousWeek = () => {
         visibleWeekStart = scheduleRepository.addWeeks(visibleWeekStart, -1);
+        selectedDayKey = '';
     };
 
     const showCurrentWeek = () => {
         visibleWeekStart = currentWeekStart;
+        selectedDayKey = '';
     };
 
     const showNextWeek = () => {
         visibleWeekStart = scheduleRepository.addWeeks(visibleWeekStart, 1);
+        selectedDayKey = '';
     };
 
     const handleOpenAnime = (episode: ScheduledEpisode) => {
         console.info('Schedule anime selected:', {
             animeId: episode.anime.id,
             episodeId: episode.id,
-        });
-    };
-
-    const handleWatchEpisode = (episode: ScheduledEpisode) => {
-        console.info('Watch episode selected:', {
-            animeId: episode.anime.id,
-            episodeId: episode.id,
-            watchUrl: episode.watchUrl,
         });
     };
 
@@ -83,30 +117,33 @@
     };
 </script>
 
-<section class="schedule-page">
+<section class="page">
     <header class="page-header">
-        <div>
+        <div class="page-heading">
             <p class="eyebrow">{activeItem.label}</p>
             <h1>Schedule</h1>
-            <p>Mock weekly calendar for airing episodes and watch actions.</p>
+            <p class="muted">Weekly airing episodes, watch links, and library-state actions.</p>
         </div>
 
-        <div class="week-controls" aria-label="Schedule week navigation">
-            <button type="button" onclick={showPreviousWeek}>Previous week</button>
-            <button type="button" disabled={isViewingCurrentWeek} onclick={showCurrentWeek}> Current week </button>
-            <button type="button" onclick={showNextWeek}>Next week</button>
+        <div aria-label="Schedule week navigation" class="week-controls">
+            <button class="button" onclick={showPreviousWeek} type="button">←</button>
+            <button class="button" disabled={isViewingCurrentWeek} onclick={showCurrentWeek} type="button">
+                Current
+            </button>
+            <button class="button" onclick={showNextWeek} type="button">→</button>
         </div>
     </header>
 
-    <section class="schedule-toolbar" aria-label="Schedule filters">
-        <div>
-            <p class="week-label">Week</p>
-            <p class="week-range">{formatWeekRange(visibleWeekStart)}</p>
+    <section aria-label="Schedule filters" class="toolbar">
+        <div class="week-summary">
+            <span>Week</span>
+            <strong>{formatWeekRange(visibleWeekStart)}</strong>
+            <p>{weekEpisodeCount} episode{weekEpisodeCount === 1 ? '' : 's'}</p>
         </div>
 
-        <label>
-            <span>Filter</span>
-            <select bind:value={filterStatus}>
+        <label class="form-field">
+            <span class="form-label">Filter</span>
+            <select bind:value={filterStatus} class="select">
                 <option value="all">All anime</option>
                 <option value="watching">Watching</option>
                 <option value="planned">Planned</option>
@@ -118,165 +155,178 @@
         </label>
     </section>
 
-    <div class="schedule-calendar" aria-label="Weekly anime schedule">
-        {#each scheduleDays as day (day.date.toISOString())}
-            <section class:current-day={scheduleRepository.isCurrentDay(day.date)} class="schedule-day">
-                <header class="schedule-day-header">
-                    <h2>{formatDayName(day.date)}</h2>
-                    <p>{formatDayDate(day.date)}</p>
-                </header>
+    <nav aria-label="Schedule days" class="day-tabs">
+        {#each scheduleDays as day (getDayKey(day.date))}
+            <button
+                class:current-day={scheduleRepository.isCurrentDay(day.date)}
+                class:selected={getDayKey(day.date) === selectedDayKey}
+                type="button"
+                onclick={() => selectDay(day)}>
+                <span>{formatDayName(day.date)}</span>
+                <strong>{formatDayDate(day.date)}</strong>
 
                 {#if day.episodes.length > 0}
-                    <div class="schedule-day-list">
-                        {#each day.episodes as episode (episode.id)}
-                            <ScheduleEpisodeCard
-                                {episode}
-                                onOpenAnime={handleOpenAnime}
-                                onWatchEpisode={handleWatchEpisode}
-                                onWatchStateAction={handleWatchStateAction}
-                            />
-                        {/each}
-                    </div>
-                {:else}
-                    <p class="empty-day">No episodes</p>
+                    <small>{day.episodes.length}</small>
                 {/if}
-            </section>
+            </button>
         {/each}
-    </div>
+    </nav>
+
+    <section class="selected-day-panel">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">{formatDayDate(selectedDay.date)}</p>
+                <h2>{formatFullDayName(selectedDay.date)}</h2>
+            </div>
+
+            <p class="muted">
+                {selectedDay.episodes.length}
+                episode{selectedDay.episodes.length === 1 ? '' : 's'}
+            </p>
+        </header>
+
+        {#if selectedDay.episodes.length > 0}
+            <div class="schedule-episode-grid">
+                {#each selectedDay.episodes as episode (episode.id)}
+                    <ScheduleEpisodeCard
+                        {episode}
+                        onOpenAnime={handleOpenAnime}
+                        onWatchStateAction={handleWatchStateAction} />
+                {/each}
+            </div>
+        {:else}
+            <p class="empty-state">No episodes for this day.</p>
+        {/if}
+    </section>
 </section>
 
 <style>
-    .schedule-page {
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-    }
-
-    .page-header,
-    .schedule-toolbar {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: end;
-        justify-content: space-between;
-        gap: 16px;
-    }
-
-    .page-header h1,
-    .page-header p,
-    .week-label,
-    .week-range {
-        margin: 0;
-    }
-
-    .eyebrow,
-    .page-header p,
-    .schedule-day-header p,
-    .empty-day,
-    .week-label,
-    .schedule-toolbar span {
-        color: var(--color-text-muted);
-    }
-
-    .eyebrow {
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-    }
-
     .week-controls {
         display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
+        gap: var(--space-2);
     }
 
-    .week-controls button,
-    .schedule-toolbar select {
-        padding: 8px 10px;
+    .week-summary {
+        display: grid;
+        gap: 2px;
+    }
+
+    .week-summary span,
+    .week-summary p {
+        margin: 0;
+        color: var(--color-text-muted);
+        font-size: 12px;
+    }
+
+    .week-summary strong {
+        font-size: 18px;
+    }
+
+    .day-tabs {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(96px, 1fr));
+        gap: var(--space-2);
+    }
+
+    .day-tabs button {
+        position: relative;
+        display: grid;
+        gap: 2px;
+        min-height: 72px;
+        padding: var(--space-3);
         border: 1px solid var(--color-border);
-        border-radius: 8px;
+        border-radius: var(--radius-md);
+        color: var(--color-text-muted);
+        text-align: left;
+        background: rgb(28 30 38 / 62%);
+        cursor: pointer;
+        transition:
+            border-color 120ms ease,
+            background 120ms ease,
+            color 120ms ease,
+            transform 120ms ease;
+    }
+
+    .day-tabs button:hover {
+        border-color: var(--color-border-strong);
         color: var(--color-text);
         background: var(--color-panel);
     }
 
-    .week-controls button {
-        cursor: pointer;
+    .day-tabs button.selected {
+        border-color: color-mix(in srgb, var(--color-accent) 60%, var(--color-border));
+        color: var(--color-text);
+        background: linear-gradient(
+            135deg,
+            color-mix(in srgb, var(--color-accent) 20%, var(--color-panel)),
+            var(--color-panel)
+        );
     }
 
-    .week-controls button:hover:not(:disabled) {
-        border-color: var(--color-accent);
+    .day-tabs button.current-day::before {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 8px;
+        height: 8px;
+        border-radius: var(--radius-pill);
+        background: var(--color-accent-hover);
+        content: '';
+        box-shadow: 0 0 0 4px var(--color-accent-muted);
     }
 
-    .week-controls button:disabled {
-        cursor: not-allowed;
-        opacity: 0.55;
-    }
-
-    .schedule-toolbar {
-        padding: 14px;
-        border: 1px solid var(--color-border);
-        border-radius: 16px;
-        background: var(--color-panel);
-    }
-
-    .week-label,
-    .schedule-toolbar span {
+    .day-tabs span {
         font-size: 12px;
-    }
-
-    .week-range {
-        margin-top: 2px;
-        font-size: 18px;
         font-weight: 700;
+        text-transform: uppercase;
     }
 
-    .schedule-toolbar label {
+    .day-tabs strong {
+        font-size: 15px;
+    }
+
+    .day-tabs small {
+        width: max-content;
+        min-width: 22px;
+        padding: 2px 7px;
+        border-radius: var(--radius-pill);
+        color: var(--color-text);
+        background: rgb(255 255 255 / 8%);
+        font-size: 12px;
+        text-align: center;
+    }
+
+    .selected-day-panel {
         display: flex;
-        min-width: 180px;
         flex-direction: column;
-        gap: 4px;
-    }
-
-    .schedule-calendar {
-        display: grid;
-        grid-template-columns: repeat(7, minmax(220px, 1fr));
-        gap: 12px;
-        overflow-x: auto;
-        padding-bottom: 8px;
-    }
-
-    .schedule-day {
-        display: flex;
-        min-width: 220px;
-        flex-direction: column;
-        gap: 12px;
-        padding: 12px;
+        gap: var(--space-4);
+        min-height: 0;
+        padding: var(--space-4);
         border: 1px solid var(--color-border);
-        border-radius: 16px;
-        background: var(--color-background);
+        border-radius: var(--radius-xl);
+        background: rgb(15 16 20 / 42%);
     }
 
-    .schedule-day.current-day {
-        border-color: color-mix(in srgb, white 75%, var(--color-border));
-        background: color-mix(in srgb, var(--color-accent) 8%, var(--color-background));
+    .schedule-episode-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: var(--space-3);
+        align-items: start;
     }
 
-    .schedule-day-header h2,
-    .schedule-day-header p {
-        margin: 0;
-    }
+    @media (max-width: 1100px) {
+        .day-tabs {
+            grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+            overflow-x: auto;
+            padding-bottom: var(--space-1);
+        }
 
-    .schedule-day-header h2 {
-        font-size: 16px;
-    }
+        .day-tabs button {
+            min-width: 92px;
+        }
 
-    .schedule-day-list {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .empty-day {
-        margin: 0;
-        font-size: 13px;
+        .schedule-episode-grid {
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        }
     }
 </style>

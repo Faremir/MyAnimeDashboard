@@ -6,11 +6,10 @@
     type Props = {
         episode: ScheduledEpisode;
         onOpenAnime: (episode: ScheduledEpisode) => void;
-        onWatchEpisode: (episode: ScheduledEpisode) => void;
         onWatchStateAction: (episode: ScheduledEpisode, action: WatchStateAction) => void;
     };
 
-    let { episode, onOpenAnime, onWatchEpisode, onWatchStateAction }: Props = $props();
+    let { episode, onOpenAnime, onWatchStateAction }: Props = $props();
 
     const formatAirTime = (date: Date): string => {
         return new Intl.DateTimeFormat(undefined, {
@@ -19,47 +18,41 @@
         }).format(date);
     };
 
-    const cardClasses = $derived(
-        ['schedule-episode-card', episode.libraryStatus !== undefined ? episode.libraryStatus : 'not-in-library']
+    let visualStatus = $derived(episode.libraryStatus ?? 'not-in-library');
+
+    let canWatchEpisode = $derived(
+        Boolean(episode.watchUrl) &&
+            episode.libraryStatus !== 'completed' &&
+            episode.libraryStatus !== 'dropped' &&
+            episode.libraryStatus !== 'paused',
+    );
+
+    let cardClasses = $derived(
+        [
+            'schedule-episode-card',
+            `state-${visualStatus}`,
+            episode.libraryStatus === 'watching' ? 'is-actionable' : '',
+            canWatchEpisode ? 'available' : 'unavailable',
+        ]
             .filter(Boolean)
             .join(' '),
     );
 
-    const canWatchEpisode = $derived(Boolean(episode.watchUrl));
-
     const handleOpenAnime = () => {
         onOpenAnime(episode);
-    };
-
-    const handleWatchEpisode = (event: MouseEvent) => {
-        event.stopPropagation();
-
-        if (!canWatchEpisode) {
-            return;
-        }
-
-        onWatchEpisode(episode);
     };
 </script>
 
 <article class={cardClasses}>
+    <div class="episode-state-strip"></div>
+
     <div class="episode-details">
-        {#if canWatchEpisode}
-            <button
-                aria-label="Watch episode"
-                class="card-open-button"
-                onclick={handleWatchEpisode}
-                title="Watch episode"
-                type="button"
-            ></button>
-        {:else}
-            <button
-                aria-label={`Open details for ${episode.anime.title}`}
-                class="card-open-button"
-                onclick={handleOpenAnime}
-                type="button"
-            ></button>
-        {/if}
+        <button
+            aria-label={`Open details for ${episode.anime.title}`}
+            class="card-open-button"
+            onclick={handleOpenAnime}
+            type="button">
+        </button>
 
         <div class="episode-cover">
             {#if episode.anime.coverImage}
@@ -68,90 +61,89 @@
                 <img
                     src="https://upload.wikimedia.org/wikipedia/commons/9/9b/MyAnimeList_favicon.svg"
                     alt=""
-                    loading="lazy"
-                />
+                    loading="lazy" />
             {/if}
         </div>
 
         <div class="episode-metadata">
-            <p class="episode-time">{formatAirTime(episode.airDateTime)}</p>
+            <div class="episode-kicker">
+                <p class="episode-time">{formatAirTime(episode.airDateTime)}</p>
+                <p class="episode-number">Episode {episode.episodeNumber}</p>
+            </div>
             <h3 class="episode-title">{episode.anime.title}</h3>
-            <p class="episode-number">Episode {episode.episodeNumber}</p>
         </div>
     </div>
 
-    <div class="episode-state">
-        {#if !episode.watchUrl}
-            <span class="watch-unavailable">Episode is not currently available</span>
-        {/if}
-    </div>
-
     <div class="episode-controls">
-        {#if episode.libraryStatus && episode.libraryStatus !== 'completed'}
-            <WatchStateControls
-                onAction={(action) => onWatchStateAction(episode, action)}
-                status={episode.libraryStatus}
-            />
-        {/if}
+        <WatchStateControls onAction={(action) => onWatchStateAction(episode, action)} status={episode.libraryStatus} />
     </div>
 </article>
 
 <style>
-    :root {
-        --color-watching: green;
-        --color-completed: white;
-        --color-planned: turquoise;
-        --color-dropped: red;
-        --color-paused: orange;
-        --color-not-in-library: blue;
-    }
-
-    /* Cards */
     .schedule-episode-card {
+        --episode-state-color: var(--state-not-in-library);
+        --library-state-color: var(--state-not-in-library);
         position: relative;
         display: grid;
+        gap: var(--space-1);
         height: 180px;
-        grid-template-rows: 100px 20px 40px;
-        padding: 12px;
-        border-radius: 12px;
-        background: var(--color-panel);
+        grid-template-rows: 100px 52px;
+        padding: var(--space-3);
+        overflow: hidden;
+        border: 1px solid color-mix(in srgb, var(--library-state-color) 33%, var(--color-border));
+        border-left: 0;
+        border-radius: var(--radius-md);
+        background:
+            linear-gradient(240deg, color-mix(in srgb, var(--library-state-color) 10%, transparent), transparent 49%),
+            var(--color-panel);
+        box-shadow: 0 8px 20px rgb(0 0 0 / 14%);
         transition:
             border-color 120ms ease,
+            background 120ms ease,
             opacity 120ms ease,
             filter 120ms ease,
-            background 120ms ease;
-    }
-
-    .schedule-episode-card.watching {
-        border-color: color-mix(in srgb, var(--color-accent) 70%, var(--color-border));
-        background: color-mix(in srgb, var(--color-accent) 12%, var(--color-panel));
-        border: 1px solid var(--color-not-in-library);
-    }
-
-    .schedule-episode-card.paused {
-        opacity: 0.6;
-        border: 1px solid var(--color-paused);
-    }
-
-    .schedule-episode-card.dropped {
-        opacity: 0.38;
-        filter: grayscale(0.9);
-        border: 1px solid var(--color-dropped);
-    }
-
-    .schedule-episode-card.completed {
-        opacity: 0.33;
-        filter: grayscale(0.7);
-        border: 1px solid var(--color-completed);
-    }
-
-    .schedule-episode-card.not-in-library {
-        opacity: 0.72;
-        border: 1px solid var(--color-not-in-library);
+            transform 120ms ease;
     }
 
     .schedule-episode-card:hover {
-        border: 1px solid greenyellow;
+        transform: translateY(var(--neg-space-2));
+    }
+
+    .schedule-episode-card.unavailable {
+        --episode-state-color: var(--color-danger);
+    }
+
+    .schedule-episode-card.available {
+        --episode-state-color: var(--color-success);
+    }
+
+    .schedule-episode-card.state-watching {
+        --library-state-color: var(--state-watching);
+    }
+
+    .schedule-episode-card.state-planned {
+        --library-state-color: var(--state-planned);
+    }
+
+    .schedule-episode-card.state-paused {
+        --library-state-color: var(--state-paused);
+        opacity: 0.68;
+    }
+
+    .schedule-episode-card.state-dropped {
+        --library-state-color: var(--state-dropped);
+        opacity: 0.3;
+        filter: grayscale(1);
+    }
+
+    .schedule-episode-card.state-completed {
+        --library-state-color: var(--state-completed);
+        opacity: 0.6;
+        filter: grayscale(0.3);
+    }
+
+    .schedule-episode-card.state-not-in-library {
+        --library-state-color: var(--state-not-in-library);
     }
 
     .episode-details {
@@ -166,17 +158,29 @@
         inset: 0;
         z-index: 1;
         border: 0;
-        border-radius: inherit;
         background: transparent;
         cursor: pointer;
     }
 
-    /* Cover */
+    .episode-state-strip {
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 4px;
+        background: var(--episode-state-color);
+        opacity: 0.95;
+    }
+
+    .episode-details,
+    .episode-cover,
+    .episode-metadata,
+    .card-open-button {
+        height: 100px;
+    }
+
     .episode-cover {
         position: relative;
         z-index: 2;
         width: 72px;
-        height: 96px;
         overflow: hidden;
         border-radius: 8px;
         background: var(--color-panel-alt);
@@ -189,32 +193,43 @@
         object-fit: cover;
     }
 
-    .episode-metadata {
-        min-width: 0;
-        overflow: hidden;
-        pointer-events: none;
-    }
-
-    .episode-time,
-    .episode-number,
-    .episode-state {
-        color: var(--color-text-muted);
+    .episode-kicker {
+        display: flex;
+        gap: var(--space-2);
         font-size: 12px;
+        font-weight: 750;
+        height: 20px;
+        flex-wrap: wrap;
+        flex-direction: row;
+        align-content: center;
+        justify-content: flex-start;
+        align-items: flex-start;
     }
 
-    .episode-time,
-    .episode-number,
-    .episode-title,
-    .episode-state {
-        margin: 0;
+    .episode-time {
+        color: color-mix(in srgb, var(--library-state-color) 55%, var(--color-text-muted));
+    }
+
+    .episode-number {
+        color: color-mix(in srgb, var(--library-state-color) 55%, var(--color-text-muted));
     }
 
     .episode-title {
-        margin-top: 4px;
-        font-size: 15px;
-        line-height: 1.25;
-        max-height: 60px;
+        margin: var(--space-2) 0 0;
+        font-size: 18px;
+        line-height: 1.35;
+        height: 70px;
+        width: 100%;
         overflow: hidden;
+        display: -webkit-box;
+        color: var(--color-text);
+        -webkit-box-orient: vertical;
+    }
+
+    .episode-state {
+        color: var(--color-text-muted);
+        font-size: 12px;
+        margin: 0;
     }
 
     .episode-controls {

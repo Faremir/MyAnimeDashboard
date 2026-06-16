@@ -27,7 +27,7 @@
 </script>
 
 <section class="anime-detail">
-    <button class="back-button" onclick={onBack} type="button"> ← Back </button>
+    <button class="back-button" onclick={onBack} type="button">← Back</button>
 
     {#if anime.bannerImage}
         <div class="detail-banner">
@@ -115,7 +115,7 @@
 
             <div class="tag-list">
                 {#each anime.genres as genre (genre)}
-                    <span>{genre}</span>
+                    <span class="tag">{genre}</span>
                 {/each}
             </div>
         </section>
@@ -235,7 +235,7 @@
         gap: 8px;
     }
 
-    .tag-list span {
+    .tag {
         padding: 4px 10px;
         border-radius: 999px;
         background: var(--color-panel);

@@ -9,30 +9,6 @@ export const navigationItems: NavigationItem[] = [
         description: 'Overview of current activity',
     },
     {
-        id: 'seasons',
-        label: 'Seasons',
-        href: '/seasons',
-        icon: 'seasons',
-        description: 'Browse seasonal anime',
-        children: [
-            {
-                id: 'seasons-current',
-                label: 'Current Season',
-                href: '/seasons/current',
-            },
-            {
-                id: 'seasons-upcoming',
-                label: 'Upcoming',
-                href: '/seasons/upcoming',
-            },
-            {
-                id: 'seasons-past',
-                label: 'Past',
-                href: '/seasons/past',
-            },
-        ],
-    },
-    {
         id: 'schedule',
         label: 'Schedule',
         href: '/schedule',

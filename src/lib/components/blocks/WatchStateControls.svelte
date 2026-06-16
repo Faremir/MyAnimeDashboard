@@ -2,7 +2,7 @@
     import type { LibraryStatus, WatchStateAction } from '@lib/types/library';
 
     type Props = {
-        status: LibraryStatus;
+        status?: LibraryStatus;
         onAction: (action: WatchStateAction) => void;
     };
 
@@ -16,28 +16,18 @@
 
 <!-- TODO: Replace text glyphs with real icons. -->
 {#if status === 'planned'}
-    <button
-        aria-label="Start watching"
-        title="Start watching"
-        type="button"
-        onclick={(event) => handleAction(event, 'start-watching')}>👁</button
-    >
-    <button aria-label="Drop" title="Drop" type="button" onclick={(event) => handleAction(event, 'drop')}>✕</button>
+    <button aria-label="Watch" type="button" onclick={(event) => handleAction(event, 'watch')}>👁</button>
+    <button aria-label="Drop" type="button" onclick={(event) => handleAction(event, 'drop')}>✕</button>
 {:else if status === 'watching'}
-    <button aria-label="Pause" title="Pause" type="button" onclick={(event) => handleAction(event, 'pause')}>⏸</button>
-    <button aria-label="Drop" title="Drop" type="button" onclick={(event) => handleAction(event, 'drop')}>✕</button>
+    <button aria-label="Pause" type="button" onclick={(event) => handleAction(event, 'pause')}>⏸</button>
+    <button aria-label="Drop" type="button" onclick={(event) => handleAction(event, 'drop')}>✕</button>
 {:else if status === 'paused'}
-    <button aria-label="Resume" title="Resume" type="button" onclick={(event) => handleAction(event, 'resume')}
-        >👁</button
-    >
-    <button aria-label="Drop" title="Drop" type="button" onclick={(event) => handleAction(event, 'drop')}>✕</button>
-{:else if status === 'dropped'}
-    <button
-        aria-label="Start from beginning"
-        title="Start from beginning"
-        type="button"
-        onclick={(event) => handleAction(event, 'restart')}>↻</button
-    >
+    <button aria-label="Resume" type="button" onclick={(event) => handleAction(event, 'resume')}>▶</button>
+    <button aria-label="Drop" type="button" onclick={(event) => handleAction(event, 'drop')}>✕</button>
+{:else if status === 'dropped' || status === 'completed'}
+    <button aria-label="Rewatch" type="button" onclick={(event) => handleAction(event, 'restart')}>↻</button>
+{:else if !status}
+    <button aria-label="Watch" type="button" onclick={(event) => handleAction(event, 'watch')}>👁</button>
 {/if}
 
 <style>

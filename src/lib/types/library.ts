@@ -2,7 +2,7 @@ import type { Anime, AnimeId } from './anime';
 
 export type LibraryEntryId = number;
 export type LibraryStatus = 'watching' | 'completed' | 'planned' | 'dropped' | 'paused';
-export type WatchStateAction = 'start-watching' | 'pause' | 'drop' | 'resume' | 'restart';
+export type WatchStateAction = 'watch' | 'pause' | 'drop' | 'resume' | 'restart';
 export type LibraryOrderBy = 'dateAdded' | 'dateUpdated' | 'title' | 'releaseDate';
 export type SortDirection = 'asc' | 'desc';
 

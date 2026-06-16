@@ -21,8 +21,7 @@
                 <img
                     src="https://upload.wikimedia.org/wikipedia/commons/9/9b/MyAnimeList_favicon.svg"
                     alt=""
-                    loading="lazy"
-                />
+                    loading="lazy" />
             {/if}
         </div>
     </div>
@@ -36,7 +35,7 @@
             {#if entry.anime.genres.length > 0}
                 <div class="tag-list">
                     {#each entry.anime.genres as genre (genre)}
-                        <span>{genre}</span>
+                        <span class="tag">{genre}</span>
                     {/each}
                 </div>
             {/if}
@@ -76,12 +75,9 @@
     </div>
     <div class="library-entry-column">
         <div class="library-entry-row">
-            <button
-                aria-label={`Open details for ${entry.anime.title}`}
-                class="library-entry-button"
-                onclick={onOpen}
-                type="button">Details</button
-            >
+            <button aria-label="Open details" class="library-entry-button" onclick={onOpen} type="button">
+                Details
+            </button>
         </div>
         <div class="library-entry-row watch-state-controls">
             <WatchStateControls onAction={(action) => onWatchStateAction(entry, action)} status={entry.status} />
@@ -176,7 +172,7 @@
         gap: 6px;
     }
 
-    .tag-list span {
+    .tag {
         padding: 3px 8px;
         border: 1px solid var(--color-border);
         border-radius: 999px;
@@ -190,6 +186,7 @@
         gap: 16px;
         margin: 0;
     }
+
     .library-entry-meta div {
         min-width: 88px;
     }

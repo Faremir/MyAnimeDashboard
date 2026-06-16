@@ -20,8 +20,7 @@
         onSelectItem={selectNavigationItem}
         onSelectSection={selectNavigationSection}
         primaryItems={navigationItems}
-        {secondaryItems}
-    />
+        {secondaryItems} />
 
     <MainPanel {activeItem} {activeSection} />
 </div>
@@ -29,8 +28,17 @@
 <style>
     .app-shell {
         display: grid;
-        grid-template-columns: 312px 1fr;
+        grid-template-columns:
+            calc(var(--layout-primary-nav-width) + var(--layout-secondary-nav-width))
+            minmax(0, 1fr);
         min-height: 100vh;
-        background: var(--color-bg);
+        width: 100%;
+        color: var(--color-text);
+    }
+
+    @media (max-width: 760px) {
+        .app-shell {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
