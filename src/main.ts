@@ -1,6 +1,6 @@
 import './app.css';
 
-import App from '@lib/components/layout/AppShell.svelte';
+import App from '@lib/app/components/AppShell.svelte';
 import { mount } from 'svelte';
 
 const app = mount(App, {
