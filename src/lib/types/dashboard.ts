@@ -1,6 +1,5 @@
 import type { LibraryStatus } from '@lib/types/library';
-
-export type DashboardTone = 'good' | 'warning' | 'neutral';
+import type { StatusItem } from '@lib/types/status';
 
 export type DashboardLibraryStat = {
     label: string;
@@ -13,15 +12,9 @@ export type DashboardMetric = {
     value: number;
 };
 
-export type DashboardStatusItem = {
-    label: string;
-    value: string;
-    tone: DashboardTone;
-};
-
 export type DashboardSummary = {
     libraryStats: DashboardLibraryStat[];
     scheduleMetrics: DashboardMetric[];
-    attentionItems: DashboardStatusItem[];
-    systemItems: DashboardStatusItem[];
+    attentionItems: StatusItem[];
+    systemItems: StatusItem[];
 };

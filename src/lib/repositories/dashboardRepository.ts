@@ -1,8 +1,9 @@
 import { mockLibraryListItems } from '@lib/mock/library';
 import { mockScheduledEpisodes } from '@lib/mock/schedule';
-import type { DashboardSummary, DashboardTone } from '@lib/types/dashboard';
+import type { DashboardSummary } from '@lib/types/dashboard';
 import type { LibraryStatus } from '@lib/types/library';
 import type { WeekStartDay } from '@lib/types/schedule';
+import type { StatusTone } from '@lib/types/status';
 import { addDays, addWeeks, getWeekStart, isDateInRange, startOfDay } from '@lib/utils/date';
 
 const countLibraryStatus = (status: LibraryStatus): number => {
@@ -15,7 +16,7 @@ const countUniqueScheduledAnime = (predicate: (libraryStatus: LibraryStatus | un
     ).size;
 };
 
-const getToneForCount = (count: number): DashboardTone => {
+const getToneForCount = (count: number): StatusTone => {
     return count > 0 ? 'warning' : 'good';
 };
 
@@ -89,21 +90,25 @@ export const dashboardRepository = {
                     label: 'MAL account',
                     value: 'Not connected',
                     tone: 'warning',
+                    description: 'MyAnimeList login and sync are planned for a later milestone.',
                 },
                 {
                     label: 'Local persistence',
                     value: 'Not enabled yet',
                     tone: 'warning',
+                    description: 'Current data is still temporary mock data.',
                 },
                 {
                     label: 'Untracked airing anime',
                     value: `${untrackedAiringAnimeCount}`,
                     tone: getToneForCount(untrackedAiringAnimeCount),
+                    description: 'Airing titles not currently represented as library entries.',
                 },
                 {
                     label: 'Paused library entries',
                     value: `${pausedLibraryCount}`,
                     tone: pausedLibraryCount > 0 ? 'neutral' : 'good',
+                    description: 'Paused entries may need review later.',
                 },
             ],
             systemItems: [
@@ -111,21 +116,25 @@ export const dashboardRepository = {
                     label: 'Data mode',
                     value: 'Mock data',
                     tone: 'neutral',
+                    description: 'The current app preview is powered by test data.',
                 },
                 {
                     label: 'Library source',
                     value: 'Mock repository',
                     tone: 'neutral',
+                    description: 'Persistent library storage is planned for a later milestone.',
                 },
                 {
                     label: 'Schedule source',
                     value: 'Mock repository',
                     tone: 'neutral',
+                    description: 'Real schedule discovery is planned for a later milestone.',
                 },
                 {
                     label: 'Sync',
                     value: 'Not configured',
                     tone: 'warning',
+                    description: 'Sync settings will become available after MAL integration.',
                 },
             ],
         };

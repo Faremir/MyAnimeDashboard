@@ -1,5 +1,6 @@
 <script lang="ts">
     import { selectNavigationSection } from '@lib/actions/navigation';
+    import StatusList from '@lib/components/blocks/StatusList.svelte';
     import { navigationItems } from '@lib/config/navigation';
     import { dashboardRepository } from '@lib/repositories/dashboardRepository';
     import type { NavigationItem } from '@lib/types/navigation';
@@ -97,14 +98,7 @@
                 </div>
             </header>
 
-            <div class="status-list">
-                {#each summary.attentionItems as item (item.label)}
-                    <div class={`status-row tone-${item.tone}`}>
-                        <span>{item.label}</span>
-                        <strong>{item.value}</strong>
-                    </div>
-                {/each}
-            </div>
+            <StatusList ariaLabel="Attention needed" items={summary.attentionItems} />
         </article>
 
         <a
@@ -121,14 +115,7 @@
                 <span class="card-destination">Open Settings →</span>
             </header>
 
-            <div class="status-list">
-                {#each summary.systemItems as item (item.label)}
-                    <div class={`status-row tone-${item.tone}`}>
-                        <span>{item.label}</span>
-                        <strong>{item.value}</strong>
-                    </div>
-                {/each}
-            </div>
+            <StatusList ariaLabel="System status" items={summary.systemItems} />
         </a>
     </div>
 </section>
@@ -195,8 +182,7 @@
     }
 
     .stat-card span,
-    .metric-row span,
-    .status-row span {
+    .metric-row span {
         color: var(--color-text-muted);
         font-size: 13px;
         font-weight: 700;
@@ -208,14 +194,12 @@
         line-height: 1;
     }
 
-    .metric-list,
-    .status-list {
+    .metric-list {
         display: grid;
         gap: var(--space-3);
     }
 
-    .metric-row,
-    .status-row {
+    .metric-row {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -226,26 +210,9 @@
         background: rgb(20 22 29 / 38%);
     }
 
-    .metric-row strong,
-    .status-row strong {
+    .metric-row strong {
         color: var(--color-text);
         font-size: 16px;
-    }
-
-    .status-row {
-        border-left: 4px solid var(--color-border-strong);
-    }
-
-    .tone-good {
-        border-left-color: var(--color-success);
-    }
-
-    .tone-warning {
-        border-left-color: var(--color-warning);
-    }
-
-    .tone-neutral {
-        border-left-color: var(--color-border-strong);
     }
 
     @media (max-width: 900px) {
