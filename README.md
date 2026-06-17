@@ -3,73 +3,114 @@
 [![CI](https://github.com/Faremir/MyAnimeDashboard/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Faremir/MyAnimeDashboard/actions/workflows/ci.yml)
 ![Status](https://img.shields.io/badge/status-early%20development-orange)
 ![Stable release](https://img.shields.io/badge/stable%20release-not%20available-lightgrey)
-![Platform](https://img.shields.io/badge/platform-desktop%20planned-blue)
+![Desktop app](https://img.shields.io/badge/desktop%20app-planned-blue)
 ![MyAnimeList sync](https://img.shields.io/badge/MyAnimeList%20sync-planned-blueviolet)
 
-**My Anime Dashboard** is a desktop-style anime library app for tracking what you are watching, what you have completed, what you plan to watch, and what you may want to return to later.
+**Your anime library, airing schedule, and watch progress in one focused desktop dashboard.**
 
-The app is currently in early development and is not ready for regular use yet.
+---
 
-## What It Will Do
+## What is it?
 
-My Anime Dashboard is intended to become a personal anime tracking app with:
+**My Anime Dashboard** is a planned desktop app for anime fans who want a cleaner way to track what they watch.
 
-- A clean dashboard for your anime activity
-- A searchable anime library
-- Status groups such as Watching, Completed, Planned, Paused, and Dropped
-- Anime detail pages with metadata, images, scores, genres, and related titles
-- Sorting and filtering for larger libraries
-- Local data storage
-- MyAnimeList synchronization
-- A desktop installable version
+Instead of jumping between your anime list, weekly airing pages, episode links, and notes, MAD is meant to bring the
+important parts together:
 
-## Current Status
+- what you are watching,
+- what is airing,
+- what needs your attention,
+- what is already in your library,
+- and what should sync with MyAnimeList later.
 
-The app currently has an early working interface with:
+The app is currently in early development and is not ready for normal use yet.
 
-- Library browsing
+---
+
+## What MAD is meant to become
+
+### Your anime home screen
+
+A quick overview of your anime world: library status, schedule status, sync status, and anything that needs attention.
+
+### A focused anime library
+
+Keep track of anime you are watching, planning, pausing, dropping, or completing.
+
+### A useful airing schedule
+
+See what is airing, navigate by week and day, and quickly decide whether something belongs in your library.
+
+### Anime details in one place
+
+Open an anime detail page with titles, images, genres, scores, related anime, and eventually episode/watch context.
+
+### MyAnimeList sync
+
+Connect your MyAnimeList account later so your local dashboard and MAL list can stay in sync.
+
+---
+
+## Current development preview
+
+MAD currently has an early mock interface with:
+
+| Area          | Current preview                               |
+| ------------- | --------------------------------------------- |
+| Dashboard     | Status and attention overview                 |
+| Schedule      | Mock weekly airing schedule                   |
+| Library       | Mock anime library with search and sorting    |
+| Anime details | Mock detail pages with related anime          |
+| Settings      | Placeholder for future account and sync setup |
+
+The current app uses temporary test data. Real local storage, real provider data, and MyAnimeList sync are planned for
+later development stages.
+
+---
+
+## Planned features
+
+- Desktop app
+- Local anime library
+- Airing schedule
 - Anime detail pages
-- Related anime navigation
-- Search
-- Sorting
-- Pagination
-- Cover and banner images
-- Temporary mock anime data
+- Episode/watch availability context
+- Local-first data storage
+- MyAnimeList login and sync
+- Provider setup
+- User preferences
+- Release builds for normal users
 
-The current data is temporary test data. Real local storage and account synchronization are planned for a later stage.
+---
 
-## Planned Platforms
+## Availability
 
-The goal is to make the app available as a desktop application.
+MAD is not installable yet.
 
-Planned target platforms:
+A downloadable version will be added when the app reaches a usable desktop release stage.
+
+Planned first platform:
 
 - Windows
-- Later possibly Linux
-- Later possibly macOS
 
-## MyAnimeList Support
+Possible later platforms:
 
-MyAnimeList login and synchronization are planned.
+- Linux
+- macOS
 
-The intended goal is to let users connect their MyAnimeList account so their anime list, statuses, scores, and progress can be kept in sync.
+---
 
-This feature is not available yet.
-
-## Installation
-
-The app is not installable yet.
-
-A downloadable version will be added when the project reaches a usable desktop-app stage.
-
-## Releases
-
-There is no stable release yet.
-
-Release history will be tracked in [CHANGELOG.md](CHANGELOG.md) once public/test builds begin.
-
-## Development Status
+## Project status
 
 This project is under active development.
 
-Expect missing features, incomplete screens, temporary data, and breaking changes until the first usable release.
+Expect unfinished screens, temporary data, missing features, and frequent changes until the first usable release.
+
+For release history, see [CHANGELOG.md](CHANGELOG.md).
+For the development plan, see [ROADMAP.md](ROADMAP.md).
+
+---
+
+## License
+
+My Anime Dashboard is licensed under the GPL-3.0 license. See [LICENSE](LICENSE) for details.
