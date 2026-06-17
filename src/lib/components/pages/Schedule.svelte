@@ -4,6 +4,7 @@
     import type { WatchStateAction } from '@lib/types/library';
     import type { NavigationItem } from '@lib/types/navigation';
     import type { ScheduleDay, ScheduledEpisode, ScheduleFilterStatus, WeekStartDay } from '@lib/types/schedule';
+    import { getDayKey } from '@lib/utils/date';
 
     type Props = {
         activeItem: NavigationItem;
@@ -17,14 +18,6 @@
     let filterStatus = $state<ScheduleFilterStatus>('all');
     let visibleWeekStart = $state(scheduleRepository.getWeekStart(new Date(), weekStartsOn));
     let selectedDayKey = $state('');
-
-    const getDayKey = (date: Date): string => {
-        return [
-            date.getFullYear(),
-            String(date.getMonth() + 1).padStart(2, '0'),
-            String(date.getDate()).padStart(2, '0'),
-        ].join('-');
-    };
 
     let scheduleDays = $derived(scheduleRepository.findWeek(visibleWeekStart, weekStartsOn, filterStatus));
 

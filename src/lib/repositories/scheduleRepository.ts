@@ -1,26 +1,6 @@
 import { mockScheduledEpisodes } from '@lib/mock/schedule';
 import type { ScheduleDay, ScheduledEpisode, ScheduleFilterStatus, WeekStartDay } from '@lib/types/schedule';
-
-const daysInWeek = 7;
-const millisecondsInDay = 24 * 60 * 60 * 1000;
-
-const startOfDay = (date: Date): Date => {
-    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-};
-
-const addDays = (date: Date, days: number): Date => {
-    return new Date(startOfDay(date).getTime() + days * millisecondsInDay);
-};
-
-const isSameDay = (left: Date, right: Date): boolean => {
-    return startOfDay(left).getTime() === startOfDay(right).getTime();
-};
-
-const isDateInRange = (date: Date, start: Date, end: Date): boolean => {
-    const time = date.getTime();
-
-    return time >= start.getTime() && time < end.getTime();
-};
+import { addDays, addWeeks, daysInWeek, getWeekStart, isDateInRange, isSameDay } from '@lib/utils/date';
 
 const sortEpisodesByAirTime = (episodes: ScheduledEpisode[]): ScheduledEpisode[] => {
     return [...episodes].sort((left, right) => left.airDateTime.getTime() - right.airDateTime.getTime());
@@ -52,16 +32,11 @@ const createScheduleDays = (weekStart: Date, episodes: ScheduledEpisode[]): Sche
 
 export const scheduleRepository = {
     getWeekStart(date: Date, weekStartsOn: WeekStartDay): Date {
-        const dayStart = startOfDay(date);
-        const dayOfWeek = dayStart.getDay();
-
-        const offset = weekStartsOn === 'monday' ? (dayOfWeek === 0 ? -6 : 1 - dayOfWeek) : -dayOfWeek;
-
-        return addDays(dayStart, offset);
+        return getWeekStart(date, weekStartsOn);
     },
 
     addWeeks(date: Date, weeks: number): Date {
-        return addDays(date, weeks * daysInWeek);
+        return addWeeks(date, weeks);
     },
 
     isCurrentDay(date: Date, currentDate: Date = new Date()): boolean {

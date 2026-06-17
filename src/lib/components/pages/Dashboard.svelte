@@ -1,163 +1,28 @@
 <script lang="ts">
     import { selectNavigationSection } from '@lib/actions/navigation';
     import { navigationItems } from '@lib/config/navigation';
-    import { mockLibraryListItems } from '@lib/mock/library';
-    import { mockScheduledEpisodes } from '@lib/mock/schedule';
-    import type { LibraryStatus } from '@lib/types/library';
+    import { dashboardRepository } from '@lib/repositories/dashboardRepository';
     import type { NavigationItem } from '@lib/types/navigation';
 
     type Props = {
         activeItem: NavigationItem;
     };
 
-    type LibraryStat = {
-        label: string;
-        value: number;
-        status: LibraryStatus;
-    };
-
-    type StatusItem = {
-        label: string;
-        value: string;
-        tone?: 'good' | 'warning' | 'neutral';
-    };
-
     let { activeItem }: Props = $props();
+
+    const summary = dashboardRepository.getSummary();
 
     const libraryItem = navigationItems.find((item) => item.id === 'library');
     const scheduleItem = navigationItems.find((item) => item.id === 'schedule');
     const settingsItem = navigationItems.find((item) => item.id === 'settings');
 
-    const startOfDay = (date: Date): Date => new Date(date.getFullYear(), date.getMonth(), date.getDate());
-
-    const addDays = (date: Date, days: number): Date => {
-        const nextDate = new Date(startOfDay(date));
-        nextDate.setDate(nextDate.getDate() + days);
-
-        return nextDate;
+    const getSectionHref = (item: NavigationItem | undefined): string => {
+        return item ? `#${item.id}` : '#';
     };
 
-    const isDateInRange = (date: Date, start: Date, end: Date): boolean => {
-        const time = date.getTime();
+    const openSection = (event: MouseEvent, item: NavigationItem | undefined) => {
+        event.preventDefault();
 
-        return time >= start.getTime() && time < end.getTime();
-    };
-
-    const getWeekStart = (date: Date): Date => {
-        const dayStart = startOfDay(date);
-        const dayOfWeek = dayStart.getDay();
-        const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-
-        return addDays(dayStart, mondayOffset);
-    };
-
-    const countLibraryStatus = (status: LibraryStatus): number => {
-        return mockLibraryListItems.filter((entry) => entry.status === status).length;
-    };
-
-    const currentDate = new Date();
-    const todayStart = startOfDay(currentDate);
-    const tomorrowStart = addDays(todayStart, 1);
-    const weekStart = getWeekStart(currentDate);
-    const nextWeekStart = addDays(weekStart, 7);
-
-    const todayEpisodeCount = mockScheduledEpisodes.filter((episode) =>
-        isDateInRange(episode.airDateTime, todayStart, tomorrowStart),
-    ).length;
-
-    const weekEpisodeCount = mockScheduledEpisodes.filter((episode) =>
-        isDateInRange(episode.airDateTime, weekStart, nextWeekStart),
-    ).length;
-
-    const trackedAiringAnimeCount = new Set(
-        mockScheduledEpisodes
-            .filter((episode) => episode.libraryStatus !== undefined)
-            .map((episode) => episode.anime.id),
-    ).size;
-
-    const untrackedAiringAnimeCount = new Set(
-        mockScheduledEpisodes
-            .filter((episode) => episode.libraryStatus === undefined)
-            .map((episode) => episode.anime.id),
-    ).size;
-
-    const pausedLibraryCount = countLibraryStatus('paused');
-
-    const libraryStats: LibraryStat[] = [
-        {
-            label: 'Watching',
-            status: 'watching',
-            value: countLibraryStatus('watching'),
-        },
-        {
-            label: 'Planned',
-            status: 'planned',
-            value: countLibraryStatus('planned'),
-        },
-        {
-            label: 'Paused',
-            status: 'paused',
-            value: pausedLibraryCount,
-        },
-        {
-            label: 'Dropped',
-            status: 'dropped',
-            value: countLibraryStatus('dropped'),
-        },
-        {
-            label: 'Completed',
-            status: 'completed',
-            value: countLibraryStatus('completed'),
-        },
-    ];
-
-    const attentionItems: StatusItem[] = [
-        {
-            label: 'MAL account',
-            value: 'Not connected',
-            tone: 'warning',
-        },
-        {
-            label: 'Local persistence',
-            value: 'Not enabled yet',
-            tone: 'warning',
-        },
-        {
-            label: 'Untracked airing anime',
-            value: `${untrackedAiringAnimeCount}`,
-            tone: untrackedAiringAnimeCount > 0 ? 'warning' : 'good',
-        },
-        {
-            label: 'Paused library entries',
-            value: `${pausedLibraryCount}`,
-            tone: pausedLibraryCount > 0 ? 'neutral' : 'good',
-        },
-    ];
-
-    const systemItems: StatusItem[] = [
-        {
-            label: 'Data mode',
-            value: 'Mock data',
-            tone: 'neutral',
-        },
-        {
-            label: 'Library source',
-            value: 'Mock repository',
-            tone: 'neutral',
-        },
-        {
-            label: 'Schedule source',
-            value: 'Mock repository',
-            tone: 'neutral',
-        },
-        {
-            label: 'Sync',
-            value: 'Not configured',
-            tone: 'warning',
-        },
-    ];
-
-    const openSection = (item: NavigationItem | undefined) => {
         if (!item) {
             return;
         }
@@ -176,62 +41,53 @@
     </header>
 
     <div class="dashboard-grid">
-        <article class="surface dashboard-card library-summary">
+        <a
+            aria-label="Open Library"
+            class="surface clickable-surface dashboard-card library-summary"
+            href={getSectionHref(libraryItem)}
+            onclick={(event) => openSection(event, libraryItem)}>
             <header class="card-header">
                 <div>
                     <p class="eyebrow">Library snapshot</p>
                     <h2>Current library state</h2>
                 </div>
 
-                <button class="button ghost" onclick={() => openSection(libraryItem)} type="button">
-                    Open Library
-                </button>
+                <span class="card-destination">Open Library →</span>
             </header>
 
             <div aria-label="Library status counts" class="stat-grid">
-                {#each libraryStats as stat (stat.status)}
+                {#each summary.libraryStats as stat (stat.status)}
                     <div class={`stat-card state-${stat.status}`}>
                         <span>{stat.label}</span>
                         <strong>{stat.value}</strong>
                     </div>
                 {/each}
             </div>
-        </article>
+        </a>
 
-        <article class="surface dashboard-card">
+        <a
+            aria-label="Open Schedule"
+            class="surface clickable-surface dashboard-card"
+            href={getSectionHref(scheduleItem)}
+            onclick={(event) => openSection(event, scheduleItem)}>
             <header class="card-header">
                 <div>
                     <p class="eyebrow">Schedule status</p>
                     <h2>Airing overview</h2>
                 </div>
 
-                <button class="button ghost" onclick={() => openSection(scheduleItem)} type="button">
-                    Open Schedule
-                </button>
+                <span class="card-destination">Open Schedule →</span>
             </header>
 
             <div class="metric-list">
-                <div class="metric-row">
-                    <span>Episodes today</span>
-                    <strong>{todayEpisodeCount}</strong>
-                </div>
-
-                <div class="metric-row">
-                    <span>Episodes this week</span>
-                    <strong>{weekEpisodeCount}</strong>
-                </div>
-
-                <div class="metric-row">
-                    <span>Tracked airing anime</span>
-                    <strong>{trackedAiringAnimeCount}</strong>
-                </div>
-
-                <div class="metric-row">
-                    <span>Untracked airing anime</span>
-                    <strong>{untrackedAiringAnimeCount}</strong>
-                </div>
+                {#each summary.scheduleMetrics as metric (metric.label)}
+                    <div class="metric-row">
+                        <span>{metric.label}</span>
+                        <strong>{metric.value}</strong>
+                    </div>
+                {/each}
             </div>
-        </article>
+        </a>
 
         <article class="surface dashboard-card">
             <header class="card-header">
@@ -242,8 +98,8 @@
             </header>
 
             <div class="status-list">
-                {#each attentionItems as item (item.label)}
-                    <div class={`status-row tone-${item.tone ?? 'neutral'}`}>
+                {#each summary.attentionItems as item (item.label)}
+                    <div class={`status-row tone-${item.tone}`}>
                         <span>{item.label}</span>
                         <strong>{item.value}</strong>
                     </div>
@@ -251,27 +107,29 @@
             </div>
         </article>
 
-        <article class="surface dashboard-card">
+        <a
+            aria-label="Open Settings"
+            class="surface clickable-surface dashboard-card"
+            href={getSectionHref(settingsItem)}
+            onclick={(event) => openSection(event, settingsItem)}>
             <header class="card-header">
                 <div>
                     <p class="eyebrow">System status</p>
                     <h2>Current setup</h2>
                 </div>
 
-                <button class="button ghost" onclick={() => openSection(settingsItem)} type="button">
-                    Open Settings
-                </button>
+                <span class="card-destination">Open Settings →</span>
             </header>
 
             <div class="status-list">
-                {#each systemItems as item (item.label)}
-                    <div class={`status-row tone-${item.tone ?? 'neutral'}`}>
+                {#each summary.systemItems as item (item.label)}
+                    <div class={`status-row tone-${item.tone}`}>
                         <span>{item.label}</span>
                         <strong>{item.value}</strong>
                     </div>
                 {/each}
             </div>
-        </article>
+        </a>
     </div>
 </section>
 
@@ -307,6 +165,17 @@
     .card-header h2 {
         margin-top: var(--space-1);
         font-size: 20px;
+    }
+
+    .card-destination {
+        color: var(--color-text-muted);
+        font-size: 13px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .clickable-surface:hover .card-destination {
+        color: var(--color-text);
     }
 
     .stat-grid {
@@ -388,8 +257,8 @@
             flex-direction: column;
         }
 
-        .card-header .button {
-            width: 100%;
+        .card-destination {
+            white-space: normal;
         }
     }
 </style>
