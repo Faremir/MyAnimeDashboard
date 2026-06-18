@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { openAnimeDetail } from '@lib/modules/anime';
     import type { WatchStateAction } from '@lib/modules/library';
     import type { NavigationItem } from '@lib/modules/navigation';
     import type { WeekStartDay } from '@lib/shared/utils/date';
@@ -100,10 +101,7 @@
     };
 
     const handleOpenAnime = (episode: ScheduledEpisodeView) => {
-        console.info('Schedule anime selected:', {
-            animeId: episode.animeId,
-            episodeId: episode.id,
-        });
+        openAnimeDetail(episode.animeId);
     };
 
     const handleWatchStateAction = (episode: ScheduledEpisodeView, action: WatchStateAction) => {

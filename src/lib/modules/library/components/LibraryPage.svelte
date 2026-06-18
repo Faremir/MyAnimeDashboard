@@ -1,11 +1,5 @@
 <script lang="ts">
-    import {
-        AnimeDetail,
-        animeRepository,
-        closeAnimeDetail,
-        openAnimeDetail,
-        selectedAnimeId,
-    } from '@lib/modules/anime';
+    import { openAnimeDetail } from '@lib/modules/anime';
     import type { NavigationItem } from '@lib/modules/navigation';
     import type { SortDirection } from '@lib/shared/utils/search';
 
@@ -49,8 +43,6 @@
     );
     let entries = $derived(libraryResult.items);
     let totalPages = $derived(Math.max(1, Math.ceil(libraryResult.total / libraryResult.pageSize)));
-    let selectedAnime = $derived($selectedAnimeId ? animeRepository.findAnime($selectedAnimeId) : undefined);
-    let selectedAnimeRelations = $derived($selectedAnimeId ? animeRepository.getRelations($selectedAnimeId) : []);
 
     let querySignature = $derived(
         JSON.stringify({
@@ -93,41 +85,32 @@
     });
 </script>
 
-{#if selectedAnime}
-    <AnimeDetail
-        anime={selectedAnime}
-        relations={selectedAnimeRelations}
-        onBack={closeAnimeDetail}
-        onSelectAnime={openAnimeDetail} />
-{:else}
-    <section class="page">
-        <header class="page-header">
-            <div class="page-heading">
-                <p class="eyebrow">{activeItem.label}</p>
-                <h1>Library</h1>
-                <p class="muted">Your library.</p>
-            </div>
-        </header>
+<section class="page">
+    <header class="page-header">
+        <div class="page-heading">
+            <p class="eyebrow">{activeItem.label}</p>
+            <h1>Library</h1>
+            <p class="muted">Your library.</p>
+        </div>
+    </header>
 
-        <LibraryToolbar bind:search bind:orderBy bind:orderDirection total={libraryResult.total} />
+    <LibraryToolbar bind:orderBy bind:orderDirection bind:search total={libraryResult.total} />
 
-        {#if entries.length > 0}
-            <div class="library-list">
-                {#each entries as entry (entry.id)}
-                    <LibraryEntryCard
-                        {entry}
-                        onOpen={() => openAnimeDetail(entry.anime.id)}
-                        onWatchStateAction={(selectedEntry, action) =>
-                            handleWatchStateAction(selectedEntry.id, action)} />
-                {/each}
-            </div>
-        {:else}
-            <p class="empty-state">No anime found for this library view.</p>
-        {/if}
+    {#if entries.length > 0}
+        <div class="library-list">
+            {#each entries as entry (entry.id)}
+                <LibraryEntryCard
+                    {entry}
+                    onOpen={() => openAnimeDetail(entry.anime.id)}
+                    onWatchStateAction={(selectedEntry, action) => handleWatchStateAction(selectedEntry.id, action)} />
+            {/each}
+        </div>
+    {:else}
+        <p class="empty-state">No anime found for this library view.</p>
+    {/if}
 
-        <LibraryPagination {page} {totalPages} onPrevious={handlePreviousPage} onNext={handleNextPage} />
-    </section>
-{/if}
+    <LibraryPagination onNext={handleNextPage} onPrevious={handlePreviousPage} {page} {totalPages} />
+</section>
 
 <style>
     .library-list {

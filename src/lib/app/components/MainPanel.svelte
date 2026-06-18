@@ -1,4 +1,11 @@
 <script lang="ts">
+    import {
+        AnimeDetail,
+        animeRepository,
+        closeAnimeDetail,
+        openAnimeDetail,
+        selectedAnimeId,
+    } from '@lib/modules/anime';
     import { DashboardPage } from '@lib/modules/dashboard';
     import { LibraryPage } from '@lib/modules/library';
     import type { NavigationItem, NavigationSection } from '@lib/modules/navigation';
@@ -11,11 +18,21 @@
     };
 
     let { activeSection, activeItem }: Props = $props();
+
+    let selectedAnime = $derived($selectedAnimeId ? animeRepository.findAnime($selectedAnimeId) : undefined);
+
+    let selectedAnimeRelations = $derived($selectedAnimeId ? animeRepository.getRelations($selectedAnimeId) : []);
 </script>
 
 <main class="main-panel">
     <div class="main-panel-inner">
-        {#if activeSection.id === 'dashboard'}
+        {#if selectedAnime}
+            <AnimeDetail
+                anime={selectedAnime}
+                relations={selectedAnimeRelations}
+                onBack={closeAnimeDetail}
+                onSelectAnime={openAnimeDetail} />
+        {:else if activeSection.id === 'dashboard'}
             <DashboardPage {activeItem} />
         {:else if activeSection.id === 'schedule'}
             <SchedulePage {activeItem} />
