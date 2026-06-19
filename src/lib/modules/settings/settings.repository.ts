@@ -18,19 +18,24 @@ class SettingsRepositoryImpl implements SettingsRepository {
 }
 
 /**
+ * Read boundary for settings screen metadata.
  *
+ * Settings are static config for now, but this contract keeps SettingsPage away
+ * from the storage or preference source that will exist later.
  */
 export interface SettingsRepository {
     /**
-     *
-     * @param sectionId
+     * Gets the settings section represented by a settings navigation item.
      */
     getSettingsSection(sectionId: NavigationItemId): SettingsSection;
 
     /**
-     *
+     * Gets the first settings section used when no child item is active.
      */
     getDefaultSettingsSection(): SettingsSection;
 }
 
+/**
+ * Shared settings read model.
+ */
 export const settingsRepository = new SettingsRepositoryImpl();

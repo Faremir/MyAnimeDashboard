@@ -1,5 +1,8 @@
 import type { LibraryEntryReference } from './library.types';
 
+/**
+ * Seed library records used by LibraryRepository during the mock-data phase.
+ */
 export const mockLibrary: LibraryEntryReference[] = [
     {
         id: 1,

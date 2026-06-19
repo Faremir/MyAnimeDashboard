@@ -22,20 +22,24 @@ class NavigationActionsImpl implements NavigationActions {
 }
 
 /**
+ * Public command API for navigation intent.
  *
+ * Navigation actions coordinate with module-level surfaces such as AnimePage so
+ * changing sections does not leave stale detail state open.
  */
 export interface NavigationActions {
     /**
-     *
-     * @param sectionId
+     * Opens a top-level navigation section and clears any active child item.
      */
     openNavigationSection(sectionId: NavigationSectionId): void;
 
     /**
-     *
-     * @param childId
+     * Opens a child navigation item within the current section.
      */
     openNavigationItem(childId: NavigationItemId): void;
 }
 
+/**
+ * Shared navigation command object used by navigation UI and dashboard links.
+ */
 export const navigationActions = new NavigationActionsImpl(navigationStore, animeActions);

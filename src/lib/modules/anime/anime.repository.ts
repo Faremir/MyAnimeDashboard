@@ -29,26 +29,29 @@ class AnimeRepositoryImpl implements AnimeRepository {
 }
 
 /**
+ * Read boundary for anime records.
  *
+ * Callers depend on this contract rather than on mock seed data, local storage,
+ * or future provider imports.
  */
 export interface AnimeRepository {
     /**
-     *
-     * @param animeId
+     * Finds an anime record when the caller can handle a missing result.
      */
     findAnime(animeId: AnimeId): Anime | undefined;
 
     /**
-     *
-     * @param animeId
+     * Gets an anime record or throws when module data is internally inconsistent.
      */
     getAnime(animeId: AnimeId): Anime;
 
     /**
-     *
-     * @param animeId
+     * Hydrates relation references into anime view models for detail rendering.
      */
     getRelations(animeId: AnimeId): RelatedAnimeView[];
 }
 
+/**
+ * Shared anime read model.
+ */
 export const animeRepository = new AnimeRepositoryImpl(mockAnime);

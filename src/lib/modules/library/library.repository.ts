@@ -92,14 +92,19 @@ class LibraryRepositoryImpl implements LibraryRepository {
 }
 
 /**
+ * Query boundary for library entries.
  *
+ * The repository currently hydrates seed references with anime records, and can
+ * later move to persistent storage without changing page/component callers.
  */
 export interface LibraryRepository {
     /**
-     *
-     * @param query
+     * Returns paged, filtered, sorted library entries hydrated for display.
      */
     findMany(query?: LibraryQuery): LibraryQueryResult;
 }
 
+/**
+ * Shared library read model.
+ */
 export const libraryRepository = new LibraryRepositoryImpl(animeRepository, mockLibrary);

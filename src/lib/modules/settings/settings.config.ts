@@ -1,5 +1,11 @@
 import type { SettingsSection } from './settings.types';
 
+/**
+ * Static settings screen metadata.
+ *
+ * Real persisted preferences should be introduced behind SettingsRepository
+ * rather than read directly from components.
+ */
 export const settingsConfig = [
     {
         id: 'settings-account-sync',

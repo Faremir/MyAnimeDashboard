@@ -18,10 +18,30 @@ class NavigationRepositoryImpl implements NavigationRepository {
     }
 }
 
+/**
+ * Read boundary for navigation metadata.
+ *
+ * The repository hides the static config shape from app composition and keeps
+ * navigation lookup behavior in one place.
+ */
 export interface NavigationRepository {
+    /**
+     * Gets a top-level navigation section or throws when config is invalid.
+     */
     getNavigationSection(id: NavigationSectionId): NavigationSection;
+
+    /**
+     * Resolves the href used for anchor semantics and fallback navigation.
+     */
     getNavigationHref(item: NavigationItem): string;
+
+    /**
+     * Gets the section used as the shell's initial navigation fallback.
+     */
     getDefaultNavigationSection(): NavigationSection;
 }
 
+/**
+ * Shared navigation read model.
+ */
 export const navigationRepository = new NavigationRepositoryImpl();

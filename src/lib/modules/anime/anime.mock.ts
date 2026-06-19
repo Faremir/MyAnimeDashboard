@@ -1,5 +1,8 @@
 import type { Anime } from './anime.types';
 
+/**
+ * Seed anime records used by AnimeRepository during the mock-data phase.
+ */
 export const mockAnime: Anime[] = [
     {
         id: 1,

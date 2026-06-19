@@ -1,5 +1,8 @@
 import type { ScheduledEpisodeReference } from './schedule.types';
 
+/**
+ * Seed schedule records used by ScheduleRepository during the mock-data phase.
+ */
 export const mockSchedule: ScheduledEpisodeReference[] = [
     {
         id: 1,

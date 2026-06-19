@@ -85,14 +85,19 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
 }
 
 /**
+ * Query boundary for schedule week views.
  *
+ * The repository owns week-start rules and hides whether schedule data comes
+ * from seed data, local storage, or a future discovery pipeline.
  */
 export interface ScheduleRepository {
     /**
-     *
-     * @param query
+     * Finds the schedule week containing the query date and applies view filters.
      */
     findScheduleWeek(query?: ScheduleWeekQuery): ScheduleWeekView;
 }
 
+/**
+ * Shared schedule read model.
+ */
 export const scheduleRepository = new ScheduleRepositoryImpl(mockSchedule, 'monday', animeRepository);

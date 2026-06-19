@@ -150,8 +150,20 @@ class DashboardRepositoryImpl implements DashboardRepository {
     }
 }
 
+/**
+ * Read boundary for dashboard aggregate data.
+ *
+ * Dashboard intentionally composes other module repositories instead of owning
+ * library or schedule source data itself.
+ */
 export interface DashboardRepository {
+    /**
+     * Builds the dashboard summary for the date used as "today".
+     */
     getSummary(currentDate?: Date): DashboardSummary;
 }
 
+/**
+ * Shared dashboard aggregate read model.
+ */
 export const dashboardRepository = new DashboardRepositoryImpl(scheduleRepository, libraryRepository);

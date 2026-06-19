@@ -1,5 +1,10 @@
 import type { NavigationSection } from './navigation.types';
 
+/**
+ * Static navigation tree for the app shell.
+ *
+ * The repository owns lookup behavior; this file is only seed/config data.
+ */
 export const navigationConfig = [
     {
         id: 'dashboard',

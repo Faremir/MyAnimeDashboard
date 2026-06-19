@@ -9,6 +9,9 @@ import type {
     AnimeSource,
 } from './anime.types';
 
+/**
+ * Display labels for anime media type values.
+ */
 export const animeMediaTypeLabels = {
     tv: 'TV',
     tv_special: 'TV Special',
@@ -20,6 +23,9 @@ export const animeMediaTypeLabels = {
     unknown: 'Unknown',
 } satisfies LabelMap<AnimeMediaType>;
 
+/**
+ * Display labels for anime airing status values.
+ */
 export const animeAiringStatusLabels = {
     finished_airing: 'Finished airing',
     currently_airing: 'Currently airing',
@@ -27,6 +33,9 @@ export const animeAiringStatusLabels = {
     unknown: 'Unknown',
 } satisfies LabelMap<AnimeAiringStatus>;
 
+/**
+ * Display labels for anime age rating values.
+ */
 export const animeAgeRatingLabels = {
     g: 'G',
     pg: 'PG',
@@ -37,6 +46,9 @@ export const animeAgeRatingLabels = {
     unknown: 'Unknown',
 } satisfies LabelMap<AnimeAgeRating>;
 
+/**
+ * Display labels for anime season values.
+ */
 export const animeSeasonLabels = {
     spring: 'Spring',
     summer: 'Summer',
@@ -44,6 +56,9 @@ export const animeSeasonLabels = {
     winter: 'Winter',
 } satisfies LabelMap<AnimeSeason>;
 
+/**
+ * Display labels for anime source values.
+ */
 export const animeSourceLabels = {
     manga: 'Manga',
     light_novel: 'Light Novel',
@@ -56,6 +71,9 @@ export const animeSourceLabels = {
     unknown: 'Unknown',
 } satisfies LabelMap<AnimeSource>;
 
+/**
+ * Display labels for anime relation type values.
+ */
 export const animeRelationTypeLabels = {
     prequel: 'Prequel',
     sequel: 'Sequel',

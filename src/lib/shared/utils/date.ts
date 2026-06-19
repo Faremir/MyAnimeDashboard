@@ -1,3 +1,6 @@
+/**
+ * Supported first-day-of-week preferences.
+ */
 export type WeekStartDay = 'monday' | 'sunday';
 
 const millisecondsInDay = 24 * 60 * 60 * 1000;
