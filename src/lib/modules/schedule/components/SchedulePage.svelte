@@ -1,12 +1,9 @@
 <script lang="ts">
-    import { openAnimeDetail } from '@lib/modules/anime';
-    import type { WatchStateAction } from '@lib/modules/library';
     import type { NavigationItem } from '@lib/modules/navigation';
-    import type { WeekStartDay } from '@lib/shared/utils/date';
-    import { addWeeks, getDateString, getWeekStart, isSameDay } from '@lib/shared/utils/date';
+    import { addWeeks, getDateString, isSameDay } from '@lib/shared/utils/date';
 
     import { scheduleRepository } from '../schedule.repository';
-    import type { ScheduleDay, ScheduledEpisodeView, ScheduleFilterStatus } from '../schedule.types';
+    import type { ScheduleDay, ScheduleFilterStatus } from '../schedule.types';
     import ScheduleEpisodeCard from './ScheduleEpisodeCard.svelte';
 
     type Props = {
@@ -15,31 +12,30 @@
 
     let { activeItem }: Props = $props();
 
-    // TODO: Replace with user setting once settings persistence exists.
-    const weekStartsOn: WeekStartDay = 'monday';
     const currentDate = new Date();
+    const currentScheduleWeek = scheduleRepository.findScheduleWeek({ date: currentDate });
 
     let filterStatus = $state<ScheduleFilterStatus>('all');
-    let visibleWeekStart = $state(getWeekStart(currentDate, weekStartsOn));
+    let visibleDate = $state(currentDate);
     let selectedDayKey = $state('');
 
-    let scheduleDays = $derived(scheduleRepository.findWeek(visibleWeekStart, weekStartsOn, filterStatus));
+    let scheduleWeek = $derived(
+        scheduleRepository.findScheduleWeek({
+            date: visibleDate,
+            filterStatus,
+        }),
+    );
 
-    let currentWeekStart = $derived(getWeekStart(currentDate, weekStartsOn));
+    let scheduleDays = $derived(scheduleWeek.days);
+    let weekEpisodeCount = $derived(scheduleWeek.episodeCount);
 
-    let isViewingCurrentWeek = $derived(visibleWeekStart.getTime() === currentWeekStart.getTime());
+    let isViewingCurrentWeek = $derived(scheduleWeek.startDate.getTime() === currentScheduleWeek.startDate.getTime());
 
     let selectedDay = $derived(
         scheduleDays.find((day) => getDateString(day.date) === selectedDayKey) ?? scheduleDays[0],
     );
 
-    let weekEpisodeCount = $derived(scheduleDays.reduce((total, day) => total + day.episodes.length, 0));
-
     $effect(() => {
-        if (scheduleDays.length === 0) {
-            return;
-        }
-
         const selectedDayExists = scheduleDays.some((day) => getDateString(day.date) === selectedDayKey);
 
         if (selectedDayExists) {
@@ -51,15 +47,11 @@
     });
 
     const formatDayName = (date: Date): string => {
-        return new Intl.DateTimeFormat(undefined, {
-            weekday: 'short',
-        }).format(date);
+        return new Intl.DateTimeFormat(undefined, { weekday: 'short' }).format(date);
     };
 
     const formatFullDayName = (date: Date): string => {
-        return new Intl.DateTimeFormat(undefined, {
-            weekday: 'long',
-        }).format(date);
+        return new Intl.DateTimeFormat(undefined, { weekday: 'long' }).format(date);
     };
 
     const formatDayDate = (date: Date): string => {
@@ -69,47 +61,32 @@
         }).format(date);
     };
 
-    const formatWeekRange = (weekStart: Date): string => {
-        const weekEnd = addWeeks(weekStart, 1);
-        weekEnd.setDate(weekEnd.getDate() - 1);
-
+    const formatWeekRange = (startDate: Date, endDate: Date): string => {
         const formatter = new Intl.DateTimeFormat(undefined, {
             month: 'short',
             day: 'numeric',
         });
 
-        return `${formatter.format(weekStart)} – ${formatter.format(weekEnd)}`;
+        return `${formatter.format(startDate)} - ${formatter.format(endDate)}`;
     };
 
-    const selectDay = (day: ScheduleDay) => {
+    const selectDay = (day: ScheduleDay): void => {
         selectedDayKey = getDateString(day.date);
     };
 
-    const showPreviousWeek = () => {
-        visibleWeekStart = addWeeks(visibleWeekStart, -1);
+    const showPreviousWeek = (): void => {
+        visibleDate = addWeeks(scheduleWeek.startDate, -1);
         selectedDayKey = '';
     };
 
-    const showCurrentWeek = () => {
-        visibleWeekStart = currentWeekStart;
+    const showCurrentWeek = (): void => {
+        visibleDate = currentDate;
         selectedDayKey = '';
     };
 
-    const showNextWeek = () => {
-        visibleWeekStart = addWeeks(visibleWeekStart, 1);
+    const showNextWeek = (): void => {
+        visibleDate = addWeeks(scheduleWeek.startDate, 1);
         selectedDayKey = '';
-    };
-
-    const handleOpenAnime = (episode: ScheduledEpisodeView) => {
-        openAnimeDetail(episode.animeId);
-    };
-
-    const handleWatchStateAction = (episode: ScheduledEpisodeView, action: WatchStateAction) => {
-        console.info('Schedule watch state action selected:', {
-            animeId: episode.animeId,
-            episodeId: episode.id,
-            action,
-        });
     };
 </script>
 
@@ -122,18 +99,18 @@
         </div>
 
         <div aria-label="Schedule week navigation" class="week-controls">
-            <button class="button" onclick={showPreviousWeek} type="button">←</button>
+            <button class="button" onclick={showPreviousWeek} type="button">Previous</button>
             <button class="button" disabled={isViewingCurrentWeek} onclick={showCurrentWeek} type="button">
                 Current
             </button>
-            <button class="button" onclick={showNextWeek} type="button">→</button>
+            <button class="button" onclick={showNextWeek} type="button">Next</button>
         </div>
     </header>
 
     <section aria-label="Schedule filters" class="toolbar">
         <div class="week-summary">
             <span>Week</span>
-            <strong>{formatWeekRange(visibleWeekStart)}</strong>
+            <strong>{formatWeekRange(scheduleWeek.startDate, scheduleWeek.endDate)}</strong>
             <p>{weekEpisodeCount} episode{weekEpisodeCount === 1 ? '' : 's'}</p>
         </div>
 
@@ -154,7 +131,7 @@
     <nav aria-label="Schedule days" class="day-tabs">
         {#each scheduleDays as day (getDateString(day.date))}
             <button
-                class:current-day={isSameDay(day.date, new Date())}
+                class:current-day={isSameDay(day.date, currentDate)}
                 class:selected={getDateString(day.date) === selectedDayKey}
                 type="button"
                 onclick={() => selectDay(day)}>
@@ -184,10 +161,7 @@
         {#if selectedDay.episodes.length > 0}
             <div class="schedule-episode-grid">
                 {#each selectedDay.episodes as episode (episode.id)}
-                    <ScheduleEpisodeCard
-                        {episode}
-                        onOpenAnime={handleOpenAnime}
-                        onWatchStateAction={handleWatchStateAction} />
+                    <ScheduleEpisodeCard {episode} />
                 {/each}
             </div>
         {:else}

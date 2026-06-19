@@ -1,17 +1,17 @@
 <script lang="ts">
+    import { animeActions } from '@lib/modules/anime';
     import Time from 'svelte-time';
 
+    import { libraryActions } from '../library.actions';
     import { formatLabel, libraryStatusLabels } from '../library.formatters';
-    import type { AnimeLibraryListItem, WatchStateAction } from '../library.types';
-    import WatchStateControls from './WatchStateControls.svelte';
+    import type { LibraryEntryView } from '../library.types';
+    import LibraryStateControls from './LibraryStateControls.svelte';
 
     type Props = {
-        entry: AnimeLibraryListItem;
-        onOpen: () => void;
-        onWatchStateAction: (entry: AnimeLibraryListItem, action: WatchStateAction) => void;
+        entry: LibraryEntryView;
     };
 
-    let { entry, onOpen, onWatchStateAction }: Props = $props();
+    let { entry }: Props = $props();
 
     let coverAlt = $derived(`${entry.anime.title} cover`);
     let titleEnglish = $derived(
@@ -82,13 +82,15 @@
         <button
             aria-label={`Open details for ${entry.anime.title}`}
             class="button library-entry-button"
-            onclick={onOpen}
+            onclick={() => animeActions.openAnimePage(entry.animeId)}
             type="button">
             Details
         </button>
 
         <div class="watch-state-controls">
-            <WatchStateControls onAction={(action) => onWatchStateAction(entry, action)} status={entry.status} />
+            <LibraryStateControls
+                onAction={(action) => libraryActions.applyActionToLibraryState(entry.animeId, action)}
+                status={entry.status} />
         </div>
     </div>
 </article>

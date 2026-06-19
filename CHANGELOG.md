@@ -34,6 +34,8 @@ use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Moved Dashboard summary calculation out of the Dashboard page.
 - Updated Library cards to use the shared visual foundation.
 - Changed Dashboard cards to navigate as whole clickable blocks instead of using separate header buttons.
+- Standardized module repositories, actions, and rune-backed stores around stable public module APIs.
+- Moved schedule week construction behind the Schedule repository.
 
 ### Planned
 

@@ -1,22 +1,36 @@
 import type { NavigationItemId } from '@lib/modules/navigation';
 
-import { settingsSections } from './settings.config';
-import type { SettingsSection, SettingsSectionId } from './settings.types';
+import { settingsConfig } from './settings.config';
+import type { SettingsSection } from './settings.types';
 
-const isSettingsSectionId = (sectionId: NavigationItemId): sectionId is SettingsSectionId => {
-    return settingsSections.some((section) => section.id === sectionId);
-};
-
-export const settingsRepository = {
-    findSettingsSection(sectionId: NavigationItemId): SettingsSection | undefined {
-        if (!isSettingsSectionId(sectionId)) {
-            return undefined;
+class SettingsRepositoryImpl implements SettingsRepository {
+    public getSettingsSection(sectionId: NavigationItemId): SettingsSection {
+        const settingsSection = settingsConfig.find((section) => section.id === sectionId);
+        if (!settingsSection) {
+            throw new Error(`Settings section ${sectionId} not found.`);
         }
+        return settingsSection;
+    }
 
-        return settingsSections.find((section) => section.id === sectionId);
-    },
+    public getDefaultSettingsSection(): SettingsSection {
+        return settingsConfig[0];
+    }
+}
 
-    getDefaultSettingsSection(): SettingsSection {
-        return settingsSections[0];
-    },
-};
+/**
+ *
+ */
+export interface SettingsRepository {
+    /**
+     *
+     * @param sectionId
+     */
+    getSettingsSection(sectionId: NavigationItemId): SettingsSection;
+
+    /**
+     *
+     */
+    getDefaultSettingsSection(): SettingsSection;
+}
+
+export const settingsRepository = new SettingsRepositoryImpl();

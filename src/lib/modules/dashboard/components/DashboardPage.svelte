@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { NavigationItem, NavigationSection } from '@lib/modules/navigation';
-    import { navigationRepository, selectNavigationSection } from '@lib/modules/navigation';
+    import { navigationActions, navigationRepository } from '@lib/modules/navigation';
     import StatusList from '@lib/shared/ui/StatusList.svelte';
 
     import { dashboardRepository } from '../dashboard.repository';
@@ -13,9 +13,9 @@
 
     const summary = dashboardRepository.getSummary();
 
-    const librarySection = navigationRepository.findNavigationSection('library');
-    const scheduleSection = navigationRepository.findNavigationSection('schedule');
-    const settingsSection = navigationRepository.findNavigationSection('settings');
+    const librarySection = navigationRepository.getNavigationSection('library');
+    const scheduleSection = navigationRepository.getNavigationSection('schedule');
+    const settingsSection = navigationRepository.getNavigationSection('settings');
 
     const openSection = (event: MouseEvent, section: NavigationSection | undefined) => {
         event.preventDefault();
@@ -24,7 +24,7 @@
             return;
         }
 
-        selectNavigationSection(section);
+        navigationActions.openNavigationSection(section.id);
     };
 </script>
 

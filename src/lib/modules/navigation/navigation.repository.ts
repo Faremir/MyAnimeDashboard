@@ -1,15 +1,27 @@
-import { navigationItems } from './navigation.config';
+import { navigationConfig } from './navigation.config';
 import type { NavigationItem, NavigationSection, NavigationSectionId } from './navigation.types';
 
-export const navigationRepository = {
-    findNavigationSection(id: NavigationSectionId): NavigationSection | undefined {
-        return navigationItems.find((item) => item.id === id);
-    },
-    getNavigationHref(item: NavigationItem | undefined): string {
-        return item?.href ?? '#';
-    },
+class NavigationRepositoryImpl implements NavigationRepository {
+    public getNavigationSection(sectionId: NavigationSectionId): NavigationSection {
+        const navigationItem = navigationConfig.find((item) => item.id === sectionId);
+        if (!navigationItem) {
+            throw new Error(`Navigation section ${sectionId} not found.`);
+        }
+        return navigationItem;
+    }
+    public getNavigationHref(item: NavigationItem): string {
+        return item.href;
+    }
 
-    getDefaultNavigationSection(): NavigationSection {
-        return navigationItems[0];
-    },
-};
+    public getDefaultNavigationSection(): NavigationSection {
+        return navigationConfig[0];
+    }
+}
+
+export interface NavigationRepository {
+    getNavigationSection(id: NavigationSectionId): NavigationSection;
+    getNavigationHref(item: NavigationItem): string;
+    getDefaultNavigationSection(): NavigationSection;
+}
+
+export const navigationRepository = new NavigationRepositoryImpl();

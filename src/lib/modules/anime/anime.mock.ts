@@ -1,4 +1,4 @@
-import type { Anime, AnimeId, RelatedAnimeView } from './anime.types';
+import type { Anime } from './anime.types';
 
 export const mockAnime: Anime[] = [
     {
@@ -102,26 +102,3 @@ export const mockAnime: Anime[] = [
         ],
     },
 ];
-
-export const findMockAnimeById = (animeId: AnimeId): Anime | undefined => {
-    return mockAnime.find((item) => item.id === animeId);
-};
-
-export const getMockAnimeById = (animeId: AnimeId): Anime => {
-    const anime = findMockAnimeById(animeId);
-
-    if (!anime) {
-        throw new Error(`Mock anime with id ${animeId} was not found.`);
-    }
-
-    return anime;
-};
-
-export const getMockAnimeRelationsById = (animeId: AnimeId): RelatedAnimeView[] => {
-    const anime = getMockAnimeById(animeId);
-
-    return anime.relations.map((relation) => ({
-        relationType: relation.relationType,
-        anime: getMockAnimeById(relation.animeId),
-    }));
-};

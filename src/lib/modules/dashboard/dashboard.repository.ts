@@ -1,39 +1,31 @@
-import { libraryRepository, type LibraryStatus } from '@lib/modules/library';
-import { scheduleRepository } from '@lib/modules/schedule';
+import { type LibraryRepository, libraryRepository, type LibraryStatus } from '@lib/modules/library';
+import { type ScheduleRepository, scheduleRepository } from '@lib/modules/schedule';
 import type { StatusTone } from '@lib/shared/ui/status.types';
-import type { WeekStartDay } from '@lib/shared/utils/date';
-import { addDays, addWeeks, getWeekStart, isDateInRange, startOfDay } from '@lib/shared/utils/date';
+import { addDays, isDateInRange, startOfDay } from '@lib/shared/utils/date';
 
 import type { DashboardSummary } from './dashboard.types';
 
-const countLibraryStatus = (status: LibraryStatus): number => {
-    return libraryRepository.findMany({
-        status,
-        pageSize: Number.MAX_SAFE_INTEGER,
-    }).total;
-};
+class DashboardRepositoryImpl implements DashboardRepository {
+    public constructor(
+        private readonly scheduleRepository: ScheduleRepository,
+        private readonly libraryRepository: LibraryRepository,
+    ) {}
 
-const getToneForCount = (count: number): StatusTone => {
-    return count > 0 ? 'warning' : 'good';
-};
-
-export const dashboardRepository = {
-    getSummary(currentDate: Date = new Date(), weekStartsOn: WeekStartDay = 'monday'): DashboardSummary {
+    public getSummary(currentDate: Date = new Date()): DashboardSummary {
         const todayStart = startOfDay(currentDate);
         const tomorrowStart = addDays(todayStart, 1);
-        const weekStart = getWeekStart(currentDate, weekStartsOn);
-        const nextWeekStart = addWeeks(weekStart, 1);
 
-        const weekDays = scheduleRepository.findWeek(weekStart, weekStartsOn);
-        const weekEpisodes = weekDays.flatMap((day) => day.episodes);
+        const scheduleWeek = this.scheduleRepository.findScheduleWeek({
+            date: currentDate,
+        });
+
+        const weekEpisodes = scheduleWeek.days.flatMap((day) => day.episodes);
 
         const todayEpisodeCount = weekEpisodes.filter((episode) =>
             isDateInRange(episode.airDateTime, todayStart, tomorrowStart),
         ).length;
 
-        const weekEpisodeCount = weekEpisodes.filter((episode) =>
-            isDateInRange(episode.airDateTime, weekStart, nextWeekStart),
-        ).length;
+        const weekEpisodeCount = scheduleWeek.episodeCount;
 
         const trackedAiringAnimeCount = new Set(
             weekEpisodes.filter((episode) => episode.libraryStatus !== undefined).map((episode) => episode.animeId),
@@ -43,19 +35,19 @@ export const dashboardRepository = {
             weekEpisodes.filter((episode) => episode.libraryStatus === undefined).map((episode) => episode.animeId),
         ).size;
 
-        const pausedLibraryCount = countLibraryStatus('paused');
+        const pausedLibraryCount = this.countLibraryEntriesByStatus('paused');
 
         return {
             libraryStats: [
                 {
                     label: 'Watching',
                     status: 'watching',
-                    value: countLibraryStatus('watching'),
+                    value: this.countLibraryEntriesByStatus('watching'),
                 },
                 {
                     label: 'Planned',
                     status: 'planned',
-                    value: countLibraryStatus('planned'),
+                    value: this.countLibraryEntriesByStatus('planned'),
                 },
                 {
                     label: 'Paused',
@@ -65,12 +57,12 @@ export const dashboardRepository = {
                 {
                     label: 'Dropped',
                     status: 'dropped',
-                    value: countLibraryStatus('dropped'),
+                    value: this.countLibraryEntriesByStatus('dropped'),
                 },
                 {
                     label: 'Completed',
                     status: 'completed',
-                    value: countLibraryStatus('completed'),
+                    value: this.countLibraryEntriesByStatus('completed'),
                 },
             ],
             scheduleMetrics: [
@@ -107,7 +99,7 @@ export const dashboardRepository = {
                 {
                     label: 'Untracked airing anime',
                     value: `${untrackedAiringAnimeCount}`,
-                    tone: getToneForCount(untrackedAiringAnimeCount),
+                    tone: this.getToneForCount(untrackedAiringAnimeCount),
                     description: 'Airing titles not currently represented as library entries.',
                 },
                 {
@@ -144,5 +136,22 @@ export const dashboardRepository = {
                 },
             ],
         };
-    },
-};
+    }
+
+    private countLibraryEntriesByStatus(status: LibraryStatus): number {
+        return this.libraryRepository.findMany({
+            status,
+            pageSize: Number.MAX_SAFE_INTEGER,
+        }).total;
+    }
+
+    private getToneForCount(count: number): StatusTone {
+        return count > 0 ? 'warning' : 'good';
+    }
+}
+
+export interface DashboardRepository {
+    getSummary(currentDate?: Date): DashboardSummary;
+}
+
+export const dashboardRepository = new DashboardRepositoryImpl(scheduleRepository, libraryRepository);

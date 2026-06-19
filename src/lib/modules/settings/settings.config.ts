@@ -1,6 +1,6 @@
 import type { SettingsSection } from './settings.types';
 
-export const settingsSections = [
+export const settingsConfig = [
     {
         id: 'settings-account-sync',
         title: 'Account and sync',

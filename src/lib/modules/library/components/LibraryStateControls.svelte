@@ -1,14 +1,14 @@
 <script lang="ts">
-    import type { LibraryStatus, WatchStateAction } from '../library.types';
+    import type { LibraryStateAction, LibraryStatus } from '../library.types';
 
     type Props = {
         status?: LibraryStatus;
-        onAction: (action: WatchStateAction) => void;
+        onAction: (action: LibraryStateAction) => void;
     };
 
     let { status, onAction }: Props = $props();
 
-    const handleAction = (event: MouseEvent, action: WatchStateAction) => {
+    const handleAction = (event: MouseEvent, action: LibraryStateAction) => {
         event.stopPropagation();
         onAction(action);
     };

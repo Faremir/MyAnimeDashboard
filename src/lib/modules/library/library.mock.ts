@@ -1,8 +1,6 @@
-import { animeRepository } from '@lib/modules/anime';
+import type { LibraryEntryReference } from './library.types';
 
-import type { AnimeLibraryEntry, AnimeLibraryListItem } from './library.types';
-
-export const mockLibraryEntries: AnimeLibraryEntry[] = [
+export const mockLibrary: LibraryEntryReference[] = [
     {
         id: 1,
         animeId: 1,
@@ -31,8 +29,3 @@ export const mockLibraryEntries: AnimeLibraryEntry[] = [
         updatedAt: new Date('2026-06-15T12:00:00Z'),
     },
 ];
-
-export const mockLibraryListItems: AnimeLibraryListItem[] = mockLibraryEntries.map((entry) => ({
-    ...entry,
-    anime: animeRepository.getAnime(entry.animeId),
-}));

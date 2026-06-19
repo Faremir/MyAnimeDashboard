@@ -1,6 +1,7 @@
 <script lang="ts">
     import Time from 'svelte-time';
 
+    import { animeActions } from '../anime.actions';
     import {
         animeAgeRatingLabels,
         animeAiringStatusLabels,
@@ -15,15 +16,13 @@
     type Props = {
         anime: Anime;
         relations?: RelatedAnimeView[];
-        onBack: () => void;
-        onSelectAnime: (animeId: Anime['id']) => void;
     };
 
-    let { anime, relations = [], onBack, onSelectAnime }: Props = $props();
+    let { anime, relations = [] }: Props = $props();
 </script>
 
 <section class="anime-detail">
-    <button class="button back-button" onclick={onBack} type="button">← Back</button>
+    <button class="button back-button" onclick={() => animeActions.closeAnimePage()} type="button">← Back</button>
 
     {#if anime.bannerImage}
         <div class="detail-banner">
@@ -122,7 +121,10 @@
             <h2>Related Anime</h2>
             <div class="relation-list">
                 {#each relations as relation (relation.anime.id)}
-                    <button class="relation-card" type="button" onclick={() => onSelectAnime(relation.anime.id)}>
+                    <button
+                        class="relation-card"
+                        type="button"
+                        onclick={() => animeActions.openAnimePage(relation.anime.id)}>
                         <span class="muted">{formatLabel(animeRelationTypeLabels, relation.relationType)}</span>
                         <strong>{relation.anime.title}</strong>
                     </button>

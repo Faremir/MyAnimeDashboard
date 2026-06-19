@@ -1,6 +1,6 @@
 import type { NavigationSection } from './navigation.types';
 
-export const navigationItems = [
+export const navigationConfig = [
     {
         id: 'dashboard',
         label: 'Dashboard',

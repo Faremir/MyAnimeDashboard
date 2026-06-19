@@ -11,7 +11,9 @@
     let { activeItem }: Props = $props();
 
     const activeSettingsSection = $derived(
-        settingsRepository.findSettingsSection(activeItem.id) ?? settingsRepository.getDefaultSettingsSection(),
+        activeItem.id
+            ? settingsRepository.getSettingsSection(activeItem.id)
+            : settingsRepository.getDefaultSettingsSection(),
     );
 </script>
 

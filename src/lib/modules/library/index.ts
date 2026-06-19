@@ -1,13 +1,14 @@
 export { default as LibraryPage } from './components/LibraryPage.svelte';
-export { default as WatchStateControls } from './components/WatchStateControls.svelte';
-export { libraryRepository } from './library.repository';
+export { default as LibraryStateControls } from './components/LibraryStateControls.svelte';
+export { type LibraryActions, libraryActions } from './library.actions';
+export { type LibraryRepository, libraryRepository } from './library.repository';
 export type {
-    AnimeLibraryEntry,
-    AnimeLibraryListItem,
     LibraryEntryId,
+    LibraryEntryReference,
+    LibraryEntryView,
     LibraryOrderBy,
     LibraryQuery,
     LibraryQueryResult,
+    LibraryStateAction,
     LibraryStatus,
-    WatchStateAction,
 } from './library.types';

@@ -1,10 +1,9 @@
 <script lang="ts">
-    import { openAnimeDetail } from '@lib/modules/anime';
     import type { NavigationItem } from '@lib/modules/navigation';
     import type { SortDirection } from '@lib/shared/utils/search';
 
     import { libraryRepository } from '../library.repository';
-    import type { LibraryOrderBy, LibraryStatus, WatchStateAction } from '../library.types';
+    import type { LibraryOrderBy, LibraryStatus } from '../library.types';
     import LibraryEntryCard from './LibraryEntryCard.svelte';
     import LibraryPagination from './LibraryPagination.svelte';
     import LibraryToolbar from './LibraryToolbar.svelte';
@@ -55,13 +54,6 @@
 
     let previousQuerySignature = $state<string | null>(null);
 
-    const handleWatchStateAction = (entryId: number, action: WatchStateAction) => {
-        console.info('Watch state action selected:', {
-            entryId,
-            action,
-        });
-    };
-
     const handlePreviousPage = () => {
         page -= 1;
     };
@@ -99,10 +91,7 @@
     {#if entries.length > 0}
         <div class="library-list">
             {#each entries as entry (entry.id)}
-                <LibraryEntryCard
-                    {entry}
-                    onOpen={() => openAnimeDetail(entry.anime.id)}
-                    onWatchStateAction={(selectedEntry, action) => handleWatchStateAction(selectedEntry.id, action)} />
+                <LibraryEntryCard {entry} />
             {/each}
         </div>
     {:else}

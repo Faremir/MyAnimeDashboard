@@ -1,8 +1,8 @@
 export { default as NavigationShell } from './components/NavigationShell.svelte';
-export { selectNavigationItem, selectNavigationSection } from './navigation.actions';
-export { navigationItems } from './navigation.config';
-export { navigationRepository } from './navigation.repository';
-export { activeChildId, activeSectionId } from './navigation.state';
+export { type NavigationActions, navigationActions } from './navigation.actions';
+export { navigationConfig } from './navigation.config';
+export { type NavigationRepository, navigationRepository } from './navigation.repository';
+export { navigationStore } from './navigation.state.svelte';
 export type {
     LibraryNavigationItemId,
     NavigationIcon,

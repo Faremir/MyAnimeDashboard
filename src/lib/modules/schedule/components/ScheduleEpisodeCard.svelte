@@ -1,16 +1,15 @@
 <script lang="ts">
-    import type { WatchStateAction } from '@lib/modules/library';
-    import { WatchStateControls } from '@lib/modules/library';
+    import { animeActions } from '@lib/modules/anime';
+    import { LibraryStateControls } from '@lib/modules/library';
+    import { libraryActions } from '@lib/modules/library';
 
     import type { ScheduledEpisodeView } from '../schedule.types';
 
     type Props = {
         episode: ScheduledEpisodeView;
-        onOpenAnime: (episode: ScheduledEpisodeView) => void;
-        onWatchStateAction: (episode: ScheduledEpisodeView, action: WatchStateAction) => void;
     };
 
-    let { episode, onOpenAnime, onWatchStateAction }: Props = $props();
+    let { episode }: Props = $props();
 
     const formatAirTime = (date: Date): string => {
         return new Intl.DateTimeFormat(undefined, {
@@ -38,10 +37,6 @@
             .filter(Boolean)
             .join(' '),
     );
-
-    const handleOpenAnime = () => {
-        onOpenAnime(episode);
-    };
 </script>
 
 <article class={cardClasses}>
@@ -51,7 +46,7 @@
         <button
             aria-label={`Open details for ${episode.anime.title}`}
             class="card-open-button"
-            onclick={handleOpenAnime}
+            onclick={() => animeActions.openAnimePage(episode.animeId)}
             type="button">
         </button>
 
@@ -76,7 +71,9 @@
     </div>
 
     <div class="episode-controls">
-        <WatchStateControls onAction={(action) => onWatchStateAction(episode, action)} status={episode.libraryStatus} />
+        <LibraryStateControls
+            onAction={(action) => libraryActions.applyActionToLibraryState(episode.animeId, action)}
+            status={episode.libraryStatus} />
     </div>
 </article>
 

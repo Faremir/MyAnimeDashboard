@@ -1,6 +1,5 @@
 import type { Anime, AnimeId } from '@lib/modules/anime';
-import type { LibraryStatus, WatchStateAction } from '@lib/modules/library';
-
+import type { LibraryStatus } from '@lib/modules/library';
 export type ScheduleEpisodeId = number;
 
 export type ScheduleFilterStatus = 'all' | 'not-in-library' | LibraryStatus;
@@ -23,4 +22,14 @@ export type ScheduleDay = {
     episodes: ScheduledEpisodeView[];
 };
 
-export type ScheduleWatchStateHandler = (episode: ScheduledEpisodeView, action: WatchStateAction) => void;
+export type ScheduleWeekQuery = {
+    date?: Date;
+    filterStatus?: ScheduleFilterStatus;
+};
+
+export type ScheduleWeekView = {
+    startDate: Date;
+    endDate: Date;
+    days: ScheduleDay[];
+    episodeCount: number;
+};

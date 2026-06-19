@@ -1,6 +1,6 @@
 import type { ScheduledEpisodeReference } from './schedule.types';
 
-export const mockScheduledEpisodes: ScheduledEpisodeReference[] = [
+export const mockSchedule: ScheduledEpisodeReference[] = [
     {
         id: 1,
         animeId: 1,

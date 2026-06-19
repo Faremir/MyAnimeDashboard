@@ -3,10 +3,10 @@ import type { SortDirection } from '@lib/shared/utils/search';
 
 export type LibraryEntryId = number;
 export type LibraryStatus = 'watching' | 'completed' | 'planned' | 'dropped' | 'paused';
-export type WatchStateAction = 'watch' | 'pause' | 'drop' | 'resume' | 'restart';
+export type LibraryStateAction = 'watch' | 'pause' | 'drop' | 'resume' | 'restart';
 export type LibraryOrderBy = 'dateAdded' | 'dateUpdated' | 'title' | 'releaseDate';
 
-export type AnimeLibraryEntry = {
+export type LibraryEntryReference = {
     id: LibraryEntryId;
     animeId: AnimeId;
 
@@ -19,7 +19,7 @@ export type AnimeLibraryEntry = {
     updatedAt: Date;
 };
 
-export type AnimeLibraryListItem = AnimeLibraryEntry & {
+export type LibraryEntryView = LibraryEntryReference & {
     anime: Anime;
 };
 export type LibraryQuery = {
@@ -31,7 +31,7 @@ export type LibraryQuery = {
     pageSize?: number;
 };
 export type LibraryQueryResult = {
-    items: AnimeLibraryListItem[];
+    items: LibraryEntryView[];
     total: number;
     page: number;
     pageSize: number;

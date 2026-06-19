@@ -1,16 +1,15 @@
 <script lang="ts">
+    import { navigationActions } from '../navigation.actions';
+    import { navigationConfig } from '../navigation.config';
     import type { NavigationIcon, NavigationItem, NavigationSection } from '../navigation.types';
 
     type Props = {
-        primaryItems: NavigationSection[];
-        secondaryItems: NavigationItem[];
         activeSection: NavigationSection;
         activeItem: NavigationItem;
-        onSelectSection: (item: NavigationSection) => void;
-        onSelectItem: (item: NavigationItem) => void;
+        secondaryItems: NavigationItem[];
     };
 
-    let { primaryItems, secondaryItems, activeSection, activeItem, onSelectSection, onSelectItem }: Props = $props();
+    let { secondaryItems, activeSection, activeItem }: Props = $props();
 
     const iconByName: Record<NavigationIcon, string> = {
         dashboard: '◆',
@@ -33,12 +32,12 @@
         <div aria-label="MAD" class="app-mark">M</div>
 
         <div class="primary-navigation-list">
-            {#each primaryItems as item (item.id)}
+            {#each navigationConfig as item (item.id)}
                 <button
                     aria-current={item.id === activeSection.id ? 'page' : undefined}
                     aria-label={item.label}
                     class="primary-navigation-button"
-                    onclick={() => onSelectSection(item)}
+                    onclick={() => navigationActions.openNavigationSection(item.id)}
                     title={item.label}
                     type="button">
                     <span>{getIcon(item)}</span>
@@ -62,7 +61,7 @@
                 <button
                     aria-current={item.id === activeItem.id ? 'page' : undefined}
                     class="secondary-navigation-button"
-                    onclick={() => onSelectItem(item)}
+                    onclick={() => navigationActions.openNavigationItem(item.id)}
                     type="button">
                     <span>{item.label}</span>
 

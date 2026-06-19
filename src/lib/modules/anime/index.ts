@@ -1,6 +1,6 @@
-export { closeAnimeDetail, openAnimeDetail } from './anime.actions';
-export { animeRepository } from './anime.repository';
-export { selectedAnimeId } from './anime.state';
+export { type AnimeActions, animeActions } from './anime.actions';
+export { type AnimeRepository, animeRepository } from './anime.repository';
+export { animeStore } from './anime.state.svelte';
 export type {
     Anime,
     AnimeAgeRating,
@@ -14,4 +14,4 @@ export type {
     RelatedAnimeReference,
     RelatedAnimeView,
 } from './anime.types';
-export { default as AnimeDetail } from './components/AnimeDetail.svelte';
+export { default as AnimePage } from './components/AnimePage.svelte';

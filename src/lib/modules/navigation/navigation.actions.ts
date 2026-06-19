@@ -1,17 +1,41 @@
-import { closeAnimeDetail } from '@lib/modules/anime';
+import { type AnimeActions, animeActions } from '@lib/modules/anime';
 
-import { activeChildId, activeSectionId } from './navigation.state';
-import type { NavigationItem, NavigationSection } from './navigation.types';
+import { type NavigationStore, navigationStore } from './navigation.state.svelte';
+import type { NavigationItemId, NavigationSectionId } from './navigation.types';
 
-export const selectNavigationSection = (item: NavigationSection) => {
-    closeAnimeDetail();
+class NavigationActionsImpl implements NavigationActions {
+    public constructor(
+        private readonly store: NavigationStore,
+        private readonly animeActions: AnimeActions,
+    ) {}
 
-    activeSectionId.set(item.id);
-    activeChildId.set(null);
-};
+    public openNavigationSection(sectionId: NavigationSectionId): void {
+        this.animeActions.closeAnimePage();
+        this.store.setActiveSectionId(sectionId);
+        this.store.clearActiveItemId();
+    }
 
-export const selectNavigationItem = (item: NavigationItem) => {
-    closeAnimeDetail();
+    public openNavigationItem(itemId: NavigationItemId): void {
+        this.animeActions.closeAnimePage();
+        this.store.setActiveItemId(itemId);
+    }
+}
 
-    activeChildId.set(item.id);
-};
+/**
+ *
+ */
+export interface NavigationActions {
+    /**
+     *
+     * @param sectionId
+     */
+    openNavigationSection(sectionId: NavigationSectionId): void;
+
+    /**
+     *
+     * @param childId
+     */
+    openNavigationItem(childId: NavigationItemId): void;
+}
+
+export const navigationActions = new NavigationActionsImpl(navigationStore, animeActions);
