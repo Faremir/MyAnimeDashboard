@@ -25,7 +25,7 @@ class LibraryRepositoryImpl implements LibraryRepository {
         this.libraryItems = libraryItems.map((entry) => this.cloneEntry(entry));
     }
 
-    public static sortLibraryEntryViews(
+    private static sortLibraryEntryViews(
         items: LibraryEntryView[],
         orderBy: LibraryOrderBy,
         direction: SortDirection,

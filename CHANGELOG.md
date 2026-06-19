@@ -2,40 +2,34 @@
 
 All notable changes to My Anime Dashboard will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and future released versions will
-use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and future tagged versions will use
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [0.1.0-alpha] - 2026-06-19
+
 ### Added
 
-- Initial desktop-style application shell.
-- Dashboard status overview with library, schedule, attention, and system summary cards.
-- Library page with mock entries, search, sorting, pagination, and anime-detail navigation.
-- Schedule page with week navigation, day tabs, filtering, and mock airing episodes.
-- Anime detail page with metadata, images, genres, scores, and related anime navigation.
-- Settings page placeholder for future account, provider, synchronization, and appearance settings.
-- Mock anime data.
-- Mock library data.
-- Mock schedule data.
-- Reusable watch-state controls.
-- Shared visual foundation for surfaces, buttons, tags, forms, page layout, and state colors.
-- Shared clickable-surface interaction style.
-- Shared date utility helpers.
-- Dashboard summary repository for mock-derived overview data.
-- Roadmap for alpha milestones leading toward `1.0.0`.
-- Continuous integration workflow.
-
-### Changed
-
-- Replaced the default project README with a project-specific overview.
-- Simplified navigation to the 1.0-relevant sections: Dashboard, Schedule, Library, and Settings.
-- Moved schedule date math into shared utilities.
-- Moved Dashboard summary calculation out of the Dashboard page.
-- Updated Library cards to use the shared visual foundation.
-- Changed Dashboard cards to navigate as whole clickable blocks instead of using separate header buttons.
-- Standardized module repositories, actions, and rune-backed stores around stable public module APIs.
-- Moved schedule week construction behind the Schedule repository.
+- Added the initial desktop-style app shell with Dashboard, Schedule, Library, and Settings sections.
+- Added the first stable navigation structure for the relevant top-level sections.
+- Added mock anime, library, schedule, and anime detail workflows.
+- Added Dashboard summary cards for library, schedule, attention, and system status.
+- Added Library search, sorting, pagination, status filtering, and watch-state controls.
+- Added Schedule week navigation, day tabs, status filtering, and episode cards.
+- Added Anime detail page with metadata, images, genres, scores, and related anime navigation.
+- Added Settings placeholders for future account, provider, synchronization, appearance, schedule, and local data setup.
+- Added shared visual styles for surfaces, buttons, tags, forms, page layout, state colors, and clickable interactions.
+- Added shared date helpers and label formatting helpers.
+- Added module repositories, actions, public indexes, and rune-backed state objects as the Phase 1 architecture.
+- Added Library-owned watch state as the source of truth for Library, Schedule, and Dashboard views.
+- Added repository-backed Library watch-state actions for status, progress, and episode watch state updates.
+- Added Schedule repository queries for week construction and airing episode views.
+- Added Dashboard repository queries for summary card data.
+- Added repository boundaries that keep mock seed data out of components.
+- Added project README, roadmap, changelog, validation scripts, and continuous integration workflow.
 
 ### Planned
 
@@ -46,4 +40,4 @@ use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - MyAnimeList login and synchronization.
 - Schedule discovery pipeline.
 - Desktop application packaging.
-- Installable release builds.
+- Installable public release builds.

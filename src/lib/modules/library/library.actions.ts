@@ -9,12 +9,6 @@ class LibraryActionsImpl implements LibraryActions {
     public applyActionToLibraryState(animeId: AnimeId, action: LibraryStateAction): void {
         const currentStatus = this.libraryRepository.findLibraryStatusByAnimeId(animeId);
 
-        console.log('Trigger library status change on the Anime', {
-            action,
-            currentStatus,
-            animeId,
-        });
-
         if (action === 'watch' && currentStatus === undefined) {
             this.libraryRepository.addLibraryEntry(animeId, 'watching');
         } else if (currentStatus === undefined) {

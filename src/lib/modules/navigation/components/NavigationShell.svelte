@@ -1,7 +1,6 @@
 <script lang="ts">
-    import { navigationRepository } from '@lib/modules/navigation';
-
     import { navigationActions } from '../navigation.actions';
+    import { navigationRepository } from '../navigation.repository';
     import type { NavigationIcon, NavigationItem, NavigationSection } from '../navigation.types';
 
     type Props = {
