@@ -1,6 +1,7 @@
 <script lang="ts">
+    import { navigationRepository } from '@lib/modules/navigation';
+
     import { navigationActions } from '../navigation.actions';
-    import { navigationConfig } from '../navigation.config';
     import type { NavigationIcon, NavigationItem, NavigationSection } from '../navigation.types';
 
     type Props = {
@@ -32,7 +33,7 @@
         <div aria-label="MAD" class="app-mark">M</div>
 
         <div class="primary-navigation-list">
-            {#each navigationConfig as item (item.id)}
+            {#each navigationRepository.getNavigationSections() as item (item.id)}
                 <button
                     aria-current={item.id === activeSection.id ? 'page' : undefined}
                     aria-label={item.label}

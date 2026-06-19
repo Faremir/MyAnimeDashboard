@@ -14,8 +14,8 @@ export type ScheduleFilterStatus = 'all' | 'not-in-library' | LibraryStatus;
 /**
  * Schedule-owned episode reference.
  *
- * The current libraryStatus field is temporary preview data. The next ownership
- * refactor should derive that status from Library instead of storing it here.
+ * Schedule owns airing and availability references only. User watch state is
+ * owned by Library and is added later when the repository builds a view.
  */
 export type ScheduledEpisodeReference = {
     id: ScheduleEpisodeId;
@@ -23,14 +23,17 @@ export type ScheduledEpisodeReference = {
     episodeNumber: number;
     airDateTime: Date;
     watchUrl?: string;
-    libraryStatus?: LibraryStatus;
 };
 
 /**
- * Scheduled episode hydrated with anime metadata for rendering.
+ * Scheduled episode hydrated with anime metadata and derived library status.
+ *
+ * The optional library status is read from LibraryRepository so Schedule views
+ * can reflect local watch state without storing that state themselves.
  */
 export type ScheduledEpisodeView = ScheduledEpisodeReference & {
     anime: Anime;
+    libraryStatus?: LibraryStatus;
 };
 
 /**

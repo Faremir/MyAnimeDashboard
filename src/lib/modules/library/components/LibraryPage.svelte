@@ -31,7 +31,7 @@
 
     let selectedStatus = $derived(statusByNavigationId[activeItem.id] ?? null);
     let libraryResult = $derived(
-        libraryRepository.findMany({
+        libraryRepository.queryLibraryEntryViews({
             status: selectedStatus,
             search,
             orderBy,

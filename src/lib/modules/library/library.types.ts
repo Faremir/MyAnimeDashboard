@@ -9,7 +9,7 @@ export type LibraryEntryId = number;
 /**
  * Local MAD watch-state value.
  */
-export type LibraryStatus = 'watching' | 'completed' | 'planned' | 'dropped' | 'paused';
+export type LibraryStatus = 'planned' | 'watching' | 'paused' | 'dropped' | 'completed';
 
 /**
  * User intent for changing local library watch state.

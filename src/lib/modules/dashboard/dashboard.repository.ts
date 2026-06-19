@@ -139,7 +139,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
     }
 
     private countLibraryEntriesByStatus(status: LibraryStatus): number {
-        return this.libraryRepository.findMany({
+        return this.libraryRepository.queryLibraryEntryViews({
             status,
             pageSize: Number.MAX_SAFE_INTEGER,
         }).total;

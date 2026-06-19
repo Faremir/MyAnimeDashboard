@@ -1,4 +1,5 @@
 import { type AnimeRepository, animeRepository } from '@lib/modules/anime';
+import { type LibraryRepository, libraryRepository, type LibraryStatus } from '@lib/modules/library';
 import type { WeekStartDay } from '@lib/shared/utils/date';
 import { addDays, addWeeks, getWeekStart, isDateInRange, isSameDay } from '@lib/shared/utils/date';
 
@@ -17,6 +18,7 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
         private readonly scheduledEpisodes: ScheduledEpisodeReference[],
         private readonly weekStartsOn: WeekStartDay,
         private readonly animeRepository: AnimeRepository,
+        private readonly libraryRepository: LibraryRepository,
     ) {}
 
     public findScheduleWeek(query: ScheduleWeekQuery = {}): ScheduleWeekView {
@@ -27,12 +29,9 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
         const weekEnd = addDays(weekEndExclusive, -1);
 
         const weekEpisodes = this.scheduledEpisodes
-            .filter(
-                (episode) =>
-                    isDateInRange(episode.airDateTime, weekStart, weekEndExclusive) &&
-                    this.matchesFilter(episode, filterStatus),
-            )
-            .map((episode) => this.hydrateScheduledEpisode(episode));
+            .filter((episode) => isDateInRange(episode.airDateTime, weekStart, weekEndExclusive))
+            .map((episode) => this.hydrateReferences(episode))
+            .filter((episode) => this.matchesFilter(episode.libraryStatus, filterStatus));
 
         const days = this.createScheduleDays(weekStart, weekEpisodes);
 
@@ -44,23 +43,30 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
         };
     }
 
-    private hydrateScheduledEpisode(episode: ScheduledEpisodeReference): ScheduledEpisodeView {
+    /**
+     * Builds component-facing schedule views.
+     *
+     * Anime metadata is resolved through AnimeRepository, while library status
+     * is derived from LibraryRepository so Schedule never owns watch state.
+     */
+    private hydrateReferences(episode: ScheduledEpisodeReference): ScheduledEpisodeView {
         return {
             ...episode,
             anime: this.animeRepository.getAnime(episode.animeId),
+            libraryStatus: this.libraryRepository.findLibraryStatusByAnimeId(episode.animeId),
         };
     }
 
-    private matchesFilter(episode: ScheduledEpisodeReference, filterStatus: ScheduleFilterStatus): boolean {
+    private matchesFilter(libraryStatus: LibraryStatus | undefined, filterStatus: ScheduleFilterStatus): boolean {
         if (filterStatus === 'all') {
             return true;
         }
 
         if (filterStatus === 'not-in-library') {
-            return episode.libraryStatus === undefined;
+            return libraryStatus === undefined;
         }
 
-        return episode.libraryStatus === filterStatus;
+        return libraryStatus === filterStatus;
     }
 
     private sortEpisodesByAirTime(episodes: ScheduledEpisodeView[]): ScheduledEpisodeView[] {
@@ -88,7 +94,8 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
  * Query boundary for schedule week views.
  *
  * The repository owns week-start rules and hides whether schedule data comes
- * from seed data, local storage, or a future discovery pipeline.
+ * from seed data, local storage, or a future discovery pipeline. Library state
+ * is joined at view-build time and remains owned by the Library module.
  */
 export interface ScheduleRepository {
     /**
@@ -100,4 +107,9 @@ export interface ScheduleRepository {
 /**
  * Shared schedule read model.
  */
-export const scheduleRepository = new ScheduleRepositoryImpl(mockSchedule, 'monday', animeRepository);
+export const scheduleRepository = new ScheduleRepositoryImpl(
+    mockSchedule,
+    'monday',
+    animeRepository,
+    libraryRepository,
+);

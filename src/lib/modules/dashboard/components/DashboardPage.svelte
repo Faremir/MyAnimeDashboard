@@ -11,7 +11,7 @@
 
     let { activeItem }: Props = $props();
 
-    const summary = dashboardRepository.getSummary();
+    const summary = $derived(dashboardRepository.getSummary());
 
     const librarySection = navigationRepository.getNavigationSection('library');
     const scheduleSection = navigationRepository.getNavigationSection('schedule');
