@@ -24,10 +24,10 @@ export const mapAnilistAnimeMetadata = (media: AnilistAnime): ProviderMappedValu
         value: {
             anilistReferenceId: media.id,
             malReferenceId: media.idMal ?? undefined,
-            title: media.title.romaji ?? media.title.english ?? media.title.native ?? 'Untitled anime',
-            titleEnglish: media.title.english ?? undefined,
-            titleNative: media.title.native ?? undefined,
-            synonyms: media.synonyms?.filter(Boolean),
+            title: media.title?.romaji ?? media.title?.english ?? media.title?.native ?? 'Untitled anime',
+            titleEnglish: media.title?.english ?? undefined,
+            titleNative: media.title?.native ?? undefined,
+            synonyms: media.synonyms?.filter((synonym): synonym is string => Boolean(synonym)),
             mediaType: mapAnilistMediaType(media.format),
             episodes: media.episodes ?? undefined,
             airingStatus: mapAnilistAiringStatus(media.status),
@@ -53,16 +53,18 @@ export const mapAnilistAnimeRelationMetadata = (
     edges: AnilistAnimeRelation[],
 ): ProviderMappedValue<AnimeRelationMetadata>[] => {
     return edges.flatMap((edge) => {
-        if (!edge.node || edge.node.type !== 'ANIME') {
+        if (!edge?.node || edge.node.type !== 'ANIME') {
             return [];
         }
+
+        const node = edge.node;
 
         return {
             value: {
                 relationType: mapAnilistRelationType(edge.relationType),
-                title: edge.node.title.romaji ?? edge.node.title.english ?? edge.node.title.native ?? undefined,
+                title: node.title?.romaji ?? node.title?.english ?? node.title?.native ?? undefined,
             },
-            externalIdentities: createAnimeExternalIdentities(edge.node.id, edge.node.idMal),
+            externalIdentities: createAnimeExternalIdentities(node.id, node.idMal),
         };
     });
 };
@@ -71,9 +73,9 @@ export const mapAnilistAnimeRelationMetadata = (
  * Maps an AniList airing schedule node into MAD's provider-neutral schedule
  * import shape and provider-owned matching identities.
  *
- * This supports both Media.airingSchedule.nodes, where mediaId may be present,
- * and top-level AiringSchedule queries, where media { id idMal } is commonly
- * requested instead.
+ * MAD imports concrete schedule entries from the top-level AniList schedule
+ * query, using the AniList airing schedule ID for schedule matching and the
+ * nested media IDs for anime matching.
  */
 export const mapAnilistAiringSchedule = (
     node: AnilistEpisodeAiringSchedule,
@@ -85,7 +87,7 @@ export const mapAnilistAiringSchedule = (
         },
         externalIdentities: [
             ...createScheduleAiringExternalIdentities(node.id),
-            ...createAnimeExternalIdentities(node.media?.id ?? node.mediaId, node.media?.idMal),
+            ...createAnimeExternalIdentities(node.media?.id, node.media?.idMal),
         ],
     };
 };

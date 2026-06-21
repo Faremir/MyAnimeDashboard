@@ -1,76 +1,36 @@
-/**
- * AniList title object returned by Media queries.
- */
-export type AnilistTitle = {
-    romaji?: string | null;
-    english?: string | null;
-    native?: string | null;
-};
+import type { AnilistAiringScheduleQuery, AnilistAnimeDetailQuery } from './anilist.generated';
 
 /**
- * AniList fuzzy date object.
+ * AniList Media object returned by the anime detail query.
+ *
+ * This is generated from MAD's GraphQL operation selection set. Keep provider
+ * DTO aliases here so mappers do not depend on the huge generated schema types
+ * directly.
+ */
+export type AnilistAnime = NonNullable<AnilistAnimeDetailQuery['Media']>;
+
+/**
+ * AniList fuzzy date object returned by Media.startDate.
  *
  * AniList can return partial dates, so mappers must only construct Date values
  * when year, month, and day are all present.
  */
-export type AnilistDate = {
-    year?: number | null;
-    month?: number | null;
-    day?: number | null;
-};
+export type AnilistDate = NonNullable<AnilistAnime['startDate']>;
 
 /**
- * AniList cover image variants returned by Media queries.
- */
-export type AnilistCoverImage = {
-    extraLarge?: string | null;
-    large?: string | null;
-    medium?: string | null;
-};
-
-/**
- * AniList anime media fields needed by MAD's provider-neutral AnimeMetadata.
+ * AniList relation edge returned by Media.relations.edges.
  *
- * This is a DTO contract for GraphQL selection sets, not a domain model. Keep
- * provider-only details here so Anime, Library, and Schedule never depend on
- * AniList response shapes directly.
+ * Relation nodes may be null, and MAD only maps relation edges that point to
+ * anime media.
  */
-export type AnilistAnime = {
-    id: number;
-    idMal?: number | null;
-    title: AnilistTitle;
-    synonyms?: string[] | null;
-    format?: string | null;
-    status?: string | null;
-    episodes?: number | null;
-    startDate?: AnilistDate | null;
-    season?: string | null;
-    isAdult?: boolean | null;
-    coverImage?: AnilistCoverImage | null;
-};
+export type AnilistAnimeRelation = NonNullable<NonNullable<AnilistAnime['relations']>['edges']>[number];
 
 /**
- * AniList relation edge returned from Media.relations.
+ * AniList airing schedule node returned by the schedule query.
  *
- * The node type is optional in the DTO because GraphQL only returns fields the
- * client requests. Relation mappers should ignore edges that do not confirm an
- * ANIME node.
+ * This is the provider DTO used before MAD matches the schedule entry to local
+ * anime and schedule records.
  */
-export type AnilistAnimeRelation = {
-    relationType?: string | null;
-    node?: (AnilistAnime & { type?: string | null }) | null;
-};
-
-/**
- * AniList airing schedule node used for concrete episode air dates.
- *
- * mediaId is optional because top-level AiringSchedule queries can request
- * media { id idMal } instead. The mapper supports both shapes.
- */
-export type AnilistEpisodeAiringSchedule = {
-    id: number;
-    airingAt: number;
-    episode: number;
-    mediaId?: number | null;
-    media?: Pick<AnilistAnime, 'id' | 'idMal'> | null;
-};
+export type AnilistEpisodeAiringSchedule = NonNullable<
+    NonNullable<NonNullable<AnilistAiringScheduleQuery['Page']>['airingSchedules']>[number]
+>;

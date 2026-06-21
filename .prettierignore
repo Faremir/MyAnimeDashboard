@@ -3,3 +3,4 @@ build
 .svelte-kit
 src-tauri/target
 coverage
+src/lib/providers/anilist/anilist.generated.ts

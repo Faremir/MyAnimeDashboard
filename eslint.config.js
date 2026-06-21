@@ -9,7 +9,14 @@ import svelteConfig from './svelte.config.js';
 
 export default ts.config(
     {
-        ignores: ['dist/**', 'build/**', 'node_modules/**', 'coverage/**', 'src-tauri/target/**'],
+        ignores: [
+            'dist/**',
+            'build/**',
+            'node_modules/**',
+            'coverage/**',
+            'src-tauri/target/**',
+            'src/lib/providers/anilist/anilist.generated.ts',
+        ],
     },
 
     js.configs.recommended,
