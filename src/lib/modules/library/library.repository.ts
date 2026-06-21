@@ -5,8 +5,8 @@ import { compareDates, compareNumbers, compareStrings, normalizeSearchQuery } fr
 import { mockLibrary } from './library.mock';
 import { type LibraryStore, libraryStore } from './library.state.svelte';
 import type {
+    LibraryEntry,
     LibraryEntryId,
-    LibraryEntryReference,
     LibraryEntryView,
     LibraryOrderBy,
     LibraryQuery,
@@ -15,12 +15,12 @@ import type {
 } from './library.types';
 
 class LibraryRepositoryImpl implements LibraryRepository {
-    private readonly libraryItems: LibraryEntryReference[];
+    private readonly libraryItems: LibraryEntry[];
 
     public constructor(
         private readonly store: LibraryStore,
         private readonly animeRepository: AnimeRepository,
-        libraryItems: LibraryEntryReference[],
+        libraryItems: LibraryEntry[],
     ) {
         this.libraryItems = libraryItems.map((entry) => this.cloneEntry(entry));
     }
@@ -146,7 +146,7 @@ class LibraryRepositoryImpl implements LibraryRepository {
         return this.libraryItems.reduce((nextId, entry) => Math.max(nextId, entry.id + 1), 1);
     }
 
-    private getMutableLibraryEntry(animeId: AnimeId): LibraryEntryReference {
+    private getMutableLibraryEntry(animeId: AnimeId): LibraryEntry {
         const entry = this.findLibraryEntry(animeId);
         if (!entry) {
             throw new Error(`Anime not found in Library!`);
@@ -154,11 +154,11 @@ class LibraryRepositoryImpl implements LibraryRepository {
         return entry;
     }
 
-    private findLibraryEntry(animeId: AnimeId): LibraryEntryReference | undefined {
+    private findLibraryEntry(animeId: AnimeId): LibraryEntry | undefined {
         return this.libraryItems.find((entry) => entry.animeId === animeId);
     }
 
-    private createLibraryEntry(animeId: AnimeId, status: LibraryStatus): LibraryEntryReference {
+    private createLibraryEntry(animeId: AnimeId, status: LibraryStatus): LibraryEntry {
         const currentDate = new Date();
         return {
             id: this.getNextEntryId(),
@@ -183,7 +183,7 @@ class LibraryRepositoryImpl implements LibraryRepository {
         }));
     }
 
-    private cloneEntry(entry: LibraryEntryReference): LibraryEntryReference {
+    private cloneEntry(entry: LibraryEntry): LibraryEntry {
         return {
             ...entry,
             addedAt: this.cloneDate(entry.addedAt),

@@ -5,23 +5,23 @@ import { addDays, addWeeks, getWeekStart, isDateInRange, isSameDay } from '@lib/
 
 import { mockSchedule } from './schedule.mock';
 import type {
-    ScheduleDay,
-    ScheduledEpisodeReference,
-    ScheduledEpisodeView,
+    DayScheduleView,
+    EpisodeSchedule,
+    EpisodeScheduleView,
     ScheduleFilterStatus,
-    ScheduleWeekQuery,
-    ScheduleWeekView,
+    WeekScheduleQuery,
+    WeekScheduleView,
 } from './schedule.types';
 
 class ScheduleRepositoryImpl implements ScheduleRepository {
     public constructor(
-        private readonly scheduledEpisodes: ScheduledEpisodeReference[],
+        private readonly scheduledEpisodes: EpisodeSchedule[],
         private readonly weekStartsOn: WeekStartDay,
         private readonly animeRepository: AnimeRepository,
         private readonly libraryRepository: LibraryRepository,
     ) {}
 
-    public findScheduleWeek(query: ScheduleWeekQuery = {}): ScheduleWeekView {
+    public findScheduleWeek(query: WeekScheduleQuery = {}): WeekScheduleView {
         const { date = new Date(), filterStatus = 'all' } = query;
 
         const weekStart = getWeekStart(date, this.weekStartsOn);
@@ -49,7 +49,7 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
      * Anime metadata is resolved through AnimeRepository, while library status
      * is derived from LibraryRepository so Schedule never owns watch state.
      */
-    private hydrateReferences(episode: ScheduledEpisodeReference): ScheduledEpisodeView {
+    private hydrateReferences(episode: EpisodeSchedule): EpisodeScheduleView {
         return {
             ...episode,
             anime: this.animeRepository.getAnime(episode.animeId),
@@ -69,12 +69,12 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
         return libraryStatus === filterStatus;
     }
 
-    private sortEpisodesByAirTime(episodes: ScheduledEpisodeView[]): ScheduledEpisodeView[] {
+    private sortEpisodesByAirTime(episodes: EpisodeScheduleView[]): EpisodeScheduleView[] {
         return [...episodes].sort((left, right) => left.airDateTime.getTime() - right.airDateTime.getTime());
     }
 
-    private createScheduleDays(weekStart: Date, episodes: ScheduledEpisodeView[]): ScheduleDay[] {
-        const scheduleDays: ScheduleDay[] = [];
+    private createScheduleDays(weekStart: Date, episodes: EpisodeScheduleView[]): DayScheduleView[] {
+        const scheduleDays: DayScheduleView[] = [];
 
         for (let dayOffset = 0; dayOffset < 7; dayOffset += 1) {
             const date = addDays(weekStart, dayOffset);
@@ -101,7 +101,7 @@ export interface ScheduleRepository {
     /**
      * Finds the schedule week containing the query date and applies view filters.
      */
-    findScheduleWeek(query?: ScheduleWeekQuery): ScheduleWeekView;
+    findScheduleWeek(query?: WeekScheduleQuery): WeekScheduleView;
 }
 
 /**

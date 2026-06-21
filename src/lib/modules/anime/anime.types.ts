@@ -1,15 +1,9 @@
+// Global contracts
+
 /**
  * Stable MAD anime identifier.
  */
 export type AnimeId = number;
-
-/**
- * Provider identifiers used to match MAD anime records with external sources.
- */
-export type ExternalAnimeIds = {
-    malId?: number;
-    anilistId?: number;
-};
 
 /**
  * Normalized anime media type.
@@ -19,31 +13,13 @@ export type AnimeMediaType = 'tv' | 'tv_special' | 'movie' | 'ova' | 'ona' | 'sp
 /**
  * Normalized anime airing lifecycle state.
  */
-export type AnimeAiringStatus = 'finished_airing' | 'currently_airing' | 'not_yet_aired' | 'unknown';
-
-/**
- * Normalized anime audience rating.
- */
-export type AnimeAgeRating = 'g' | 'pg' | 'pg_13' | 'r_17' | 'r_plus' | 'rx' | 'unknown';
+export type AnimeAiringStatus = 'finished' | 'releasing' | 'not_yet_released' | 'unknown';
 
 /**
  * Anime broadcast season.
  */
 export type AnimeSeason = 'spring' | 'summer' | 'fall' | 'winter';
 
-/**
- * Normalized source material category.
- */
-export type AnimeSource =
-    | 'manga'
-    | 'light_novel'
-    | 'visual_novel'
-    | 'game'
-    | 'original'
-    | 'novel'
-    | 'web_manga'
-    | 'other'
-    | 'unknown';
 /**
  * Relationship between two anime records.
  */
@@ -60,20 +36,24 @@ export type AnimeRelationType =
     | 'character'
     | 'other';
 
-/**
- * Provider-neutral anime record used by MAD modules.
- *
- * External provider shapes should be mapped into this type before reaching
- * repositories, actions, or UI components.
- */
-export type Anime = {
-    id: AnimeId;
-    externalIds: ExternalAnimeIds;
+// Provider-neutral contracts
 
+/**
+ * Provider-neutral anime facts normalized into MAD's domain language.
+ *
+ * This type deliberately excludes MAD-owned identity, local relations, library
+ * state, schedule state, and episode/watch availability. Raw provider DTOs
+ * should be mapped into this shape before data reaches Anime repositories,
+ * Library, Schedule, or UI components.
+ */
+export type AnimeMetadata = {
     title: string;
     titleEnglish?: string;
-    titleJapanese?: string;
+    titleNative?: string;
     synonyms?: string[];
+
+    malReferenceId?: number;
+    anilistReferenceId?: number;
 
     mediaType: AnimeMediaType;
     episodes?: number;
@@ -82,31 +62,52 @@ export type Anime = {
     releaseDate?: Date;
     season?: AnimeSeason;
 
-    source: AnimeSource;
-    genres: string[];
-
-    ageRating: AnimeAgeRating;
+    isAdult: boolean;
 
     coverImage?: string;
-    bannerImage?: string;
-    synopsis?: string;
-
-    publicScore?: number;
-    relations: RelatedAnimeReference[];
 };
 
 /**
- * Lightweight relation stored on an anime record.
+ * Provider-neutral anime relation before MAD matches it to a local AnimeId.
+ *
+ * External providers can identify related anime by external IDs, but only
+ * matched local Anime records can become RelatedAnimeReference values.
  */
-export type RelatedAnimeReference = {
+export type AnimeRelationMetadata = {
+    relationType: AnimeRelationType;
+    title?: string;
+};
+
+// Local contracts
+
+/**
+ * Local MAD anime entity.
+ *
+ * Anime owns the stable MAD AnimeId and local anime-to-anime relations. External
+ * provider data must be normalized into AnimeMetadata before it is used to
+ * create or update this entity.
+ */
+export type Anime = AnimeMetadata & {
+    id: AnimeId;
+    relations: AnimeRelation[];
+};
+
+/**
+ * Lightweight local relation between two MAD anime records.
+ *
+ * Relations use local AnimeId values, so they belong to persisted/matched Anime
+ * entities and not to raw provider DTOs or unmatched discovery records.
+ */
+export type AnimeRelation = {
     relationType: AnimeRelationType;
     animeId: AnimeId;
 };
 
+// UI contracts
+
 /**
  * Relation view model hydrated with the referenced anime record.
  */
-export type RelatedAnimeView = {
-    relationType: AnimeRelationType;
+export type AnimeRelationView = AnimeRelation & {
     anime: Anime;
 };

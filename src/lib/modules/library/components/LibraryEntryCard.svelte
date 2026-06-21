@@ -41,14 +41,6 @@
             {/if}
         </header>
 
-        {#if entry.anime.genres.length > 0}
-            <div class="tag-list" aria-label="Genres">
-                {#each entry.anime.genres as genre (genre)}
-                    <span class="tag">{genre}</span>
-                {/each}
-            </div>
-        {/if}
-
         <dl class="library-entry-meta">
             <div>
                 <dt>Progress</dt>

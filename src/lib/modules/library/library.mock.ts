@@ -1,9 +1,9 @@
-import type { LibraryEntryReference } from './library.types';
+import type { LibraryEntry } from './library.types';
 
 /**
  * Seed library records used by LibraryRepository during the mock-data phase.
  */
-export const mockLibrary: LibraryEntryReference[] = [
+export const mockLibrary: LibraryEntry[] = [
     {
         id: 1,
         animeId: 1,

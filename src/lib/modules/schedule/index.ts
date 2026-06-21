@@ -1,10 +1,11 @@
 export { default as SchedulePage } from './components/SchedulePage.svelte';
 export { type ScheduleRepository, scheduleRepository } from './schedule.repository';
 export type {
-    ScheduleDay,
-    ScheduledEpisodeReference,
-    ScheduleEpisodeId,
+    DayScheduleView,
+    EpisodeSchedule,
+    EpisodeScheduleId,
+    EpisodeScheduleMetadata,
     ScheduleFilterStatus,
-    ScheduleWeekQuery,
-    ScheduleWeekView,
+    WeekScheduleQuery,
+    WeekScheduleView,
 } from './schedule.types';

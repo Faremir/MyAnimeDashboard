@@ -3,10 +3,10 @@
     import { LibraryStateControls } from '@lib/modules/library';
     import { libraryActions } from '@lib/modules/library';
 
-    import type { ScheduledEpisodeView } from '../schedule.types';
+    import type { EpisodeScheduleView } from '../schedule.types';
 
     type Props = {
-        episode: ScheduledEpisodeView;
+        episode: EpisodeScheduleView;
     };
 
     let { episode }: Props = $props();

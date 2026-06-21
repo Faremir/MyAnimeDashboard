@@ -24,10 +24,10 @@ export type LibraryOrderBy = 'dateAdded' | 'dateUpdated' | 'title' | 'releaseDat
 /**
  * Locally owned library record.
  *
- * This is the long-term source of truth for user watch state, even after MAL
- * sync and persistent storage are added.
+ * This is the in-app/offline representation of watch state. Later sync can reconcile it with the user-selected
+ * primary AniList or MyAnimeList source.
  */
-export type LibraryEntryReference = {
+export type LibraryEntry = {
     id: LibraryEntryId;
     animeId: AnimeId;
 
@@ -43,7 +43,7 @@ export type LibraryEntryReference = {
 /**
  * Library record hydrated with anime metadata for rendering.
  */
-export type LibraryEntryView = LibraryEntryReference & {
+export type LibraryEntryView = LibraryEntry & {
     anime: Anime;
 };
 

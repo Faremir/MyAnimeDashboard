@@ -3,19 +3,17 @@
 
     import { animeActions } from '../anime.actions';
     import {
-        animeAgeRatingLabels,
         animeAiringStatusLabels,
         animeMediaTypeLabels,
         animeRelationTypeLabels,
         animeSeasonLabels,
-        animeSourceLabels,
         formatLabel,
     } from '../anime.formatters';
-    import type { Anime, RelatedAnimeView } from '../anime.types';
+    import type { Anime, AnimeRelationView } from '../anime.types';
 
     type Props = {
         anime: Anime;
-        relations?: RelatedAnimeView[];
+        relations?: AnimeRelationView[];
     };
 
     let { anime, relations = [] }: Props = $props();
@@ -24,9 +22,9 @@
 <section class="anime-detail">
     <button class="button back-button" onclick={() => animeActions.closeAnimePage()} type="button">← Back</button>
 
-    {#if anime.bannerImage}
+    {#if anime.coverImage}
         <div class="detail-banner">
-            <img src={anime.bannerImage} alt="" />
+            <img src={anime.coverImage} alt="" />
         </div>
     {/if}
 
@@ -38,22 +36,11 @@
                 <p class="muted">{anime.titleEnglish}</p>
             {/if}
 
-            {#if anime.titleJapanese}
-                <p class="muted">{anime.titleJapanese}</p>
+            {#if anime.titleNative}
+                <p class="muted">{anime.titleNative}</p>
             {/if}
         </div>
-
-        {#if anime.publicScore}
-            <div class="score-card">
-                <span class="score-label">Score</span>
-                <strong>{anime.publicScore}</strong>
-            </div>
-        {/if}
     </header>
-
-    {#if anime.synopsis}
-        <p class="synopsis">{anime.synopsis}</p>
-    {/if}
 
     <dl class="info-grid">
         <div>
@@ -69,11 +56,6 @@
         <div>
             <dt>Status</dt>
             <dd>{formatLabel(animeAiringStatusLabels, anime.airingStatus)}</dd>
-        </div>
-
-        <div>
-            <dt>Source</dt>
-            <dd>{formatLabel(animeSourceLabels, anime.source)}</dd>
         </div>
 
         <div>
@@ -100,21 +82,9 @@
 
         <div>
             <dt>Rating</dt>
-            <dd>{formatLabel(animeAgeRatingLabels, anime.ageRating)}</dd>
+            <dd>{anime.isAdult ? 'Adult content' : 'General listing'}</dd>
         </div>
     </dl>
-
-    {#if anime.genres.length > 0}
-        <section class="detail-section">
-            <h2>Genres</h2>
-
-            <div class="tag-list">
-                {#each anime.genres as genre (genre)}
-                    <span class="tag">{genre}</span>
-                {/each}
-            </div>
-        </section>
-    {/if}
 
     {#if relations.length > 0}
         <section class="detail-section">
@@ -169,26 +139,6 @@
         margin: 0;
     }
 
-    .score-card {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        padding: 12px 16px;
-        border: 1px solid var(--color-border);
-        border-radius: 12px;
-        background: var(--color-panel);
-    }
-
-    .score-label {
-        color: var(--color-text-muted);
-        font-size: 12px;
-    }
-
-    .synopsis {
-        max-width: 900px;
-        line-height: 1.6;
-    }
-
     .info-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -221,12 +171,6 @@
 
     .detail-section h2 {
         margin: 0;
-    }
-
-    .tag-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: var(--space-2);
     }
 
     .relation-list {

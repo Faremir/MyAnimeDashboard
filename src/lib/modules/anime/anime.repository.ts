@@ -1,5 +1,5 @@
 import { mockAnime } from './anime.mock';
-import type { Anime, AnimeId, RelatedAnimeView } from './anime.types';
+import type { Anime, AnimeId, AnimeRelationView } from './anime.types';
 
 class AnimeRepositoryImpl implements AnimeRepository {
     public constructor(private readonly animeItems: Anime[]) {}
@@ -18,11 +18,11 @@ class AnimeRepositoryImpl implements AnimeRepository {
         return anime;
     }
 
-    public getRelations(animeId: AnimeId): RelatedAnimeView[] {
+    public getRelations(animeId: AnimeId): AnimeRelationView[] {
         const anime = this.getAnime(animeId);
 
         return anime.relations.map((relation) => ({
-            relationType: relation.relationType,
+            ...relation,
             anime: this.getAnime(relation.animeId),
         }));
     }
@@ -48,7 +48,7 @@ export interface AnimeRepository {
     /**
      * Hydrates relation references into anime view models for detail rendering.
      */
-    getRelations(animeId: AnimeId): RelatedAnimeView[];
+    getRelations(animeId: AnimeId): AnimeRelationView[];
 }
 
 /**

@@ -1,9 +1,9 @@
-import type { ScheduledEpisodeReference } from './schedule.types';
+import type { EpisodeSchedule } from './schedule.types';
 
 /**
  * Seed schedule records used by ScheduleRepository during the mock-data phase.
  */
-export const mockSchedule: ScheduledEpisodeReference[] = [
+export const mockSchedule: EpisodeSchedule[] = [
     {
         id: 1,
         animeId: 1,

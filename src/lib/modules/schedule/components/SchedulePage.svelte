@@ -3,7 +3,7 @@
     import { addWeeks, getDateString, isSameDay } from '@lib/shared/utils/date';
 
     import { scheduleRepository } from '../schedule.repository';
-    import type { ScheduleDay, ScheduleFilterStatus } from '../schedule.types';
+    import type { DayScheduleView, ScheduleFilterStatus } from '../schedule.types';
     import ScheduleEpisodeCard from './ScheduleEpisodeCard.svelte';
 
     type Props = {
@@ -70,7 +70,7 @@
         return `${formatter.format(startDate)} - ${formatter.format(endDate)}`;
     };
 
-    const selectDay = (day: ScheduleDay): void => {
+    const selectDay = (day: DayScheduleView): void => {
         selectedDayKey = getDateString(day.date);
     };
 
@@ -81,11 +81,6 @@
 
     const showCurrentWeek = (): void => {
         visibleDate = currentDate;
-        selectedDayKey = '';
-    };
-
-    const showNextWeek = (): void => {
-        visibleDate = addWeeks(scheduleWeek.startDate, 1);
         selectedDayKey = '';
     };
 </script>
@@ -103,7 +98,6 @@
             <button class="button" disabled={isViewingCurrentWeek} onclick={showCurrentWeek} type="button">
                 Current
             </button>
-            <button class="button" onclick={showNextWeek} type="button">Next</button>
         </div>
     </header>
 

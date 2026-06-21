@@ -3,8 +3,8 @@ export { default as LibraryStateControls } from './components/LibraryStateContro
 export { type LibraryActions, libraryActions } from './library.actions';
 export { type LibraryRepository, libraryRepository } from './library.repository';
 export type {
+    LibraryEntry,
     LibraryEntryId,
-    LibraryEntryReference,
     LibraryEntryView,
     LibraryOrderBy,
     LibraryQuery,
