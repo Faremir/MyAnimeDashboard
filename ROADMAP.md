@@ -22,6 +22,22 @@ Each major roadmap phase maps to one minor alpha tag.
 | [Phase 9](#phase-9--pre-release-hardening)           | `0.9.0-alpha` | 1.0 hardening                   |
 | [Release](#release--first-public-release)            |       `1.0.0` | First public release            |
 
+## Testing plan by phase
+
+Testing should grow with the architecture instead of being deferred until hardening. Each phase should add tests at the
+lowest useful level for the behavior introduced in that phase.
+
+| Phase                                                | Testing focus                                                                                                     |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| [Phase 2](#phase-2--external-api-contracts)          | Add Vitest and unit-test provider-neutral mappers, pure transforms, and shared utility logic.                     |
+| [Phase 3](#phase-3--api-client-layer)                | Unit-test API clients with mocked fetch responses for success, HTTP errors, GraphQL errors, and network failures. |
+| [Phase 4](#phase-4--anime-detail-and-episode-flow)   | Add Svelte Testing Library for component tests around AnimeDetail opening, episode context, and empty states.     |
+| [Phase 5](#phase-5--local-persistence-foundation)    | Add storage contract tests and persistence integration tests against isolated test storage.                       |
+| [Phase 6](#phase-6--persistent-library-state)        | Test Library repository/action/store behavior for watch-state transitions, progress, and schedule joins.          |
+| [Phase 7](#phase-7--library-authentication-and-sync) | Test sync mapping, conflict direction, pending/failed states, and mocked AniList/MyAnimeList clients.             |
+| [Phase 8](#phase-8--schedule-discovery-pipeline)     | Add integration tests for schedule discovery from mocked provider data into stored local schedule records.        |
+| [Phase 9](#phase-9--pre-release-hardening)           | Add Playwright smoke/E2E coverage for the main user flows and finalize accessibility-focused component tests.     |
+
 ## Phase 1 — Initial project foundation
 
 Target tag: `0.1.0-alpha`
@@ -81,17 +97,19 @@ Define how MAD understands external provider data before connecting real API cal
 - Define episode embed availability contracts for Megaplay.
 - Keep external provider-specific details separate from the rest of the application.
 - Prepare the project for real API integration without changing current user-facing behavior.
+- Add the first test foundation for provider contract behavior.
 
 ### Completion checklist
 
-| Area                  | Expected state                                                            |
-| --------------------- | ------------------------------------------------------------------------- |
-| AniList anime data    | Anime metadata can be represented in MAD’s internal format.               |
-| AniList schedule data | Concrete airing episodes can be represented in MAD’s schedule format.     |
-| Library sync data     | AniList and MyAnimeList user library states have provider-neutral shapes. |
-| Embed data            | Megaplay watch/embed availability can be represented clearly.             |
-| External identities   | Provider-owned IDs can be carried for matching without leaking into UI.   |
-| Current app behavior  | Existing mock behavior remains stable and unchanged.                      |
+| Area                  | Expected state                                                              |
+| --------------------- | --------------------------------------------------------------------------- |
+| AniList anime data    | Anime metadata can be represented in MAD’s internal format.                 |
+| AniList schedule data | Concrete airing episodes can be represented in MAD’s schedule format.       |
+| Library sync data     | AniList and MyAnimeList user library states have provider-neutral shapes.   |
+| Embed data            | Megaplay watch/embed availability can be represented clearly.               |
+| External identities   | Provider-owned IDs can be carried for matching without leaking into UI.     |
+| Test foundation       | Vitest is configured and provider mapper behavior is covered by unit tests. |
+| Current app behavior  | Existing mock behavior remains stable and unchanged.                        |
 
 ## Phase 3 — API client layer
 
@@ -105,6 +123,7 @@ Connect MAD to real external anime data sources behind controlled boundaries.
 - Resolve episode embed availability through Megaplay.
 - Handle loading, empty, and error states for remote data.
 - Confirm whether external data can be fetched directly from the app or needs a desktop-side integration layer.
+- Cover API client behavior with deterministic mocked responses.
 
 ### Completion checklist
 
@@ -114,6 +133,7 @@ Connect MAD to real external anime data sources behind controlled boundaries.
 | AniList schedule | MAD can load concrete airing schedule data in development.                    |
 | Megaplay embeds  | MAD can resolve episode embed availability in development.                    |
 | Failure handling | Remote failures are visible and safe.                                         |
+| Client tests     | API client success and failure paths are covered without live network calls.  |
 | App independence | Basic navigation and layout do not depend on remote services being available. |
 
 ## Phase 4 — Anime detail and episode flow

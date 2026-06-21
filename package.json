@@ -7,15 +7,19 @@
         "dev": "vite",
         "build": "vite build",
         "preview": "vite preview",
-        "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
+        "typecheck": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
         "format": "prettier . --write",
         "format:check": "prettier . --check",
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",
-        "autoformat": "prettier . --write && eslint . --fix",
-        "validate": "bun run format:check && bun run lint && bun run check",
+        "test": "vitest",
+        "test:run": "vitest run",
+        "test:coverage": "vitest run --coverage",
         "graphql:generate": "graphql-codegen --config codegen.ts",
-        "graphql:watch": "graphql-codegen --config codegen.ts --watch"
+        "graphql:watch": "graphql-codegen --config codegen.ts --watch",
+        "fix": "bun run format && bun run lint:fix",
+        "quality": "bun run format:check && bun run lint && bun run typecheck && bun run test:run",
+        "validate": "bun run quality && bun run build"
     },
     "devDependencies": {
         "@eslint/js": "10.0.1",
@@ -27,6 +31,7 @@
         "@sveltejs/vite-plugin-svelte": "^7.1.2",
         "@tsconfig/svelte": "^5.0.8",
         "@types/node": "^24.12.3",
+        "@vitest/coverage-v8": "^4.1.9",
         "eslint": "^10.5.0",
         "eslint-config-prettier": "10.1.8",
         "eslint-plugin-simple-import-sort": "13.0.0",
@@ -38,7 +43,8 @@
         "svelte-check": "^4.4.8",
         "typescript": "^6.0.3",
         "typescript-eslint": "8.61.0",
-        "vite": "^8.0.12"
+        "vite": "^8.0.12",
+        "vitest": "^4.1.9"
     },
     "dependencies": {
         "@graphql-typed-document-node/core": "^3.2.0",
