@@ -154,6 +154,10 @@ const mapAnilistAiringStatus = (status: string | null | undefined): AnimeAiringS
             return 'releasing';
         case 'NOT_YET_RELEASED':
             return 'not_yet_released';
+        case 'CANCELLED':
+            return 'cancelled';
+        case 'HIATUS':
+            return 'paused';
         default:
             return 'unknown';
     }

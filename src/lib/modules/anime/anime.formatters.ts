@@ -23,6 +23,8 @@ export const animeAiringStatusLabels = {
     finished: 'Finished airing',
     releasing: 'Currently airing',
     not_yet_released: 'Not yet aired',
+    cancelled: 'Cancelled',
+    paused: 'Paused',
     unknown: 'Unknown',
 } satisfies LabelMap<AnimeAiringStatus>;
 

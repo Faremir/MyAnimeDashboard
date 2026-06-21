@@ -13,7 +13,7 @@ export type AnimeMediaType = 'tv' | 'tv_special' | 'movie' | 'ova' | 'ona' | 'sp
 /**
  * Normalized anime airing lifecycle state.
  */
-export type AnimeAiringStatus = 'finished' | 'releasing' | 'not_yet_released' | 'unknown';
+export type AnimeAiringStatus = 'finished' | 'releasing' | 'not_yet_released' | 'cancelled' | 'paused' | 'unknown';
 
 /**
  * Anime broadcast season.
