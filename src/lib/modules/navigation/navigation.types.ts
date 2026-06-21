@@ -21,12 +21,7 @@ export type LibraryNavigationItemId =
 /**
  * Secondary navigation items owned by the Settings module.
  */
-export type SettingsNavigationItemId =
-    | 'settings-account-sync'
-    | 'settings-providers'
-    | 'settings-schedule'
-    | 'settings-appearance'
-    | 'settings-local-data';
+export type SettingsNavigationItemId = 'settings-account-sync' | 'settings-schedule' | 'settings-appearance';
 
 /**
  * Any item that can be selected in the navigation shell.

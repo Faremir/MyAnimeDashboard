@@ -85,10 +85,10 @@ class DashboardRepositoryImpl implements DashboardRepository {
             ],
             attentionItems: [
                 {
-                    label: 'MAL account',
+                    label: 'Library accounts',
                     value: 'Not connected',
                     tone: 'warning',
-                    description: 'MyAnimeList login and sync are planned for a later milestone.',
+                    description: 'AniList and MyAnimeList login and sync are planned for a later milestone.',
                 },
                 {
                     label: 'Local persistence',

@@ -4,7 +4,7 @@
 ![Status](https://img.shields.io/badge/status-early%20development-orange)
 ![Stable release](https://img.shields.io/badge/stable%20release-not%20available-lightgrey)
 ![Desktop app](https://img.shields.io/badge/desktop%20app-planned-blue)
-![MyAnimeList sync](https://img.shields.io/badge/MyAnimeList%20sync-planned-blueviolet)
+![Library sync](https://img.shields.io/badge/library%20sync-planned-blueviolet)
 
 **Your anime library, airing schedule, and watch progress in one focused desktop dashboard.**
 
@@ -21,7 +21,7 @@ important parts together:
 - what is airing,
 - what needs your attention,
 - what is already in your library,
-- and what should sync with MyAnimeList later.
+- and what should sync with AniList or MyAnimeList later.
 
 The app is currently in early development and is not ready for normal use yet.
 
@@ -43,11 +43,11 @@ See what is airing, navigate by week and day, and quickly decide whether somethi
 
 ### Anime details in one place
 
-Open an anime detail page with titles, images, genres, scores, related anime, and eventually episode/watch context.
+Open an anime detail page with titles, images, age-rating context, related anime, and eventually episode/watch context.
 
-### MyAnimeList sync
+### Library sync
 
-Connect your MyAnimeList account later so your local dashboard and MAL list can stay in sync.
+Connect your AniList or MyAnimeList account later so your dashboard and external anime library can stay in sync.
 
 ---
 
@@ -63,7 +63,7 @@ MAD currently has an early mock interface with:
 | Anime details | Mock detail pages with related anime          |
 | Settings      | Placeholder for future account and sync setup |
 
-The current app uses temporary test data. Real local storage, real provider data, and MyAnimeList sync are planned for
+The current app uses temporary test data. Real local storage, real provider data, and library sync are planned for
 later development stages.
 
 ---
@@ -75,8 +75,8 @@ later development stages.
 - Airing schedule
 - Anime detail pages
 - Episode/watch availability context
-- Local-first data storage
-- MyAnimeList login and sync
+- Durable local data storage
+- AniList and MyAnimeList login and sync
 - Provider setup
 - User preferences
 - Release builds for normal users
